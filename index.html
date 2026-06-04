@@ -3,140 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elite STL - Modelos 3D Premium</title>
+  <title>Elite STL • Modelos 3D Premium</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .accent { color: #a3e635; }
-    .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgb(163 230 77 / 0.1); }
+    .nav-active { background-color: #a3e635; color: black; font-weight: 600; }
+    .product-card { transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1); }
+    .product-card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px -12px rgb(163 230 77 / 0.15); }
+    .modal { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
-<body class="bg-black text-zinc-200">
+<body class="bg-zinc-950 text-zinc-200">
 
 <div class="flex h-screen">
 
   <!-- SIDEBAR -->
-  <div class="w-72 bg-zinc-950 border-r border-zinc-900 p-6 overflow-y-auto">
-    <div class="flex items-center gap-3 mb-10">
-      <div class="w-10 h-10 bg-lime-400 rounded-2xl flex items-center justify-center text-black font-bold text-2xl">E</div>
-      <h1 class="text-3xl font-bold">Elite STL</h1>
-    </div>
-
-    <div class="space-y-1 mb-10">
-      <a onclick="navigate('home')" class="nav-item flex items-center gap-3 px-5 py-3 rounded-2xl hover:bg-zinc-900 cursor-pointer"><span class="text-xl">🏠</span> Início</a>
-      <a onclick="navigate('all')" class="nav-item flex items-center gap-3 px-5 py-3 rounded-2xl hover:bg-zinc-900 cursor-pointer"><span class="text-xl">📦</span> Todos os Modelos <span class="ml-auto bg-zinc-800 text-xs px-2.5 py-1 rounded-full">156</span></a>
-      <a onclick="navigate('trending')" class="nav-item flex items-center gap-3 px-5 py-3 rounded-2xl hover:bg-zinc-900 cursor-pointer"><span class="text-xl">⚡</span> Tendências</a>
-      <a onclick="navigate('bestsellers')" class="nav-item flex items-center gap-3 px-5 py-3 rounded-2xl hover:bg-zinc-900 cursor-pointer"><span class="text-xl">⭐</span> Mais Vendidos</a>
-      <a onclick="navigate('new')" class="nav-item flex items-center gap-3 px-5 py-3 rounded-2xl hover:bg-zinc-900 cursor-pointer"><span class="text-xl">🆕</span> Novidades</a>
-    </div>
-
-    <div>
-      <h3 class="text-zinc-500 text-xs font-medium mb-4 px-5">CATEGORIAS</h3>
-      <div class="space-y-1 text-sm">
-        <div onclick="filterCategory('mini')" class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🗿 Miniaturas <span class="ml-auto text-zinc-500">42</span></div>
-        <div onclick="filterCategory('decor')" class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🏠 Decoração <span class="ml-auto text-zinc-500">28</span></div>
-        <div onclick="filterCategory('func')" class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🔧 Funcional <span class="ml-auto text-zinc-500">35</span></div>
-        <div onclick="filterCategory('gaming')" class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🎮 Gaming <span class="ml-auto text-zinc-500">22</span></div>
-        <div onclick="filterCategory('art')" class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🎨 Arte <span class="ml-auto text-zinc-500">18</span></div>
-        <div onclick="filterCategory('cosplay')" class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🎭 Cosplay <span class="ml-auto text-zinc-500">11</span></div>
+  <div class="w-72 bg-black border-r border-zinc-900 flex flex-col">
+    <div class="p-6 border-b border-zinc-900">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-lime-400 rounded-2xl flex items-center justify-center text-black font-bold text-3xl">E</div>
+        <h1 class="text-3xl font-bold tracking-tighter">Elite STL</h1>
       </div>
     </div>
 
-    <div class="mt-12">
-      <h3 class="text-zinc-500 text-xs font-medium mb-4 px-5">EXPLORAR</h3>
+    <div class="flex-1 overflow-y-auto p-4">
+      <div class="space-y-1 mb-10">
+        <div onclick="navigateTo('home')" class="nav-item flex items-center gap-3 px-5 py-3.5 rounded-2xl cursor-pointer nav-active"><i class="fa-solid fa-house w-5"></i> Início</div>
+        <div onclick="navigateTo('all')" class="nav-item flex items-center gap-3 px-5 py-3.5 rounded-2xl cursor-pointer"><i class="fa-solid fa-layer-group w-5"></i> Todos os Modelos <span class="ml-auto bg-zinc-800 text-xs px-3 py-1 rounded-full">156</span></div>
+        <div onclick="navigateTo('trending')" class="nav-item flex items-center gap-3 px-5 py-3.5 rounded-2xl cursor-pointer"><i class="fa-solid fa-fire w-5"></i> Tendências</div>
+        <div onclick="navigateTo('bestsellers')" class="nav-item flex items-center gap-3 px-5 py-3.5 rounded-2xl cursor-pointer"><i class="fa-solid fa-star w-5"></i> Mais Vendidos</div>
+        <div onclick="navigateTo('new')" class="nav-item flex items-center gap-3 px-5 py-3.5 rounded-2xl cursor-pointer"><i class="fa-solid fa-sparkles w-5"></i> Novidades</div>
+      </div>
+
+      <div class="px-5 mb-3 text-xs font-semibold text-lime-400 tracking-widest">CATEGORIAS</div>
       <div class="space-y-1 text-sm">
-        <div class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🛍️ Fornecimento do Fabricante</div>
-        <div class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🧱 CyberBrick</div>
-        <div class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">🌐 Comunidade</div>
-        <div class="flex items-center gap-3 px-5 py-3 hover:bg-zinc-900 rounded-2xl cursor-pointer">💬 Fórum</div>
+        <div onclick="filterByCategory(this)" class="category-item flex items-center gap-3 px-5 py-3 rounded-2xl cursor-pointer"><span class="text-xl">🗿</span> Miniaturas</div>
+        <div onclick="filterByCategory(this)" class="category-item flex items-center gap-3 px-5 py-3 rounded-2xl cursor-pointer"><span class="text-xl">🏠</span> Decoração</div>
+        <div onclick="filterByCategory(this)" class="category-item flex items-center gap-3 px-5 py-3 rounded-2xl cursor-pointer"><span class="text-xl">🔧</span> Funcional</div>
+        <div onclick="filterByCategory(this)" class="category-item flex items-center gap-3 px-5 py-3 rounded-2xl cursor-pointer"><span class="text-xl">🎮</span> Gaming</div>
+        <div onclick="filterByCategory(this)" class="category-item flex items-center gap-3 px-5 py-3 rounded-2xl cursor-pointer"><span class="text-xl">🎨</span> Arte</div>
+        <div onclick="filterByCategory(this)" class="category-item flex items-center gap-3 px-5 py-3 rounded-2xl cursor-pointer"><span class="text-xl">🎭</span> Cosplay</div>
+      </div>
+    </div>
+
+    <div class="p-6 border-t border-zinc-900">
+      <div class="text-xs text-zinc-500 space-y-4">
+        <div class="flex items-center gap-3 cursor-pointer hover:text-lime-400"><i class="fa-solid fa-store"></i> Fornecimento do Fabricante</div>
+        <div class="flex items-center gap-3 cursor-pointer hover:text-lime-400"><i class="fa-solid fa-cube"></i> CyberBrick</div>
+        <div class="flex items-center gap-3 cursor-pointer hover:text-lime-400"><i class="fa-solid fa-users"></i> Comunidade</div>
+        <div class="flex items-center gap-3 cursor-pointer hover:text-lime-400"><i class="fa-solid fa-comment"></i> Fórum</div>
       </div>
     </div>
   </div>
 
   <!-- MAIN CONTENT -->
-  <div class="flex-1 overflow-auto">
-    <header class="bg-zinc-950 border-b border-zinc-900 p-5 flex items-center justify-between sticky top-0">
-      <input id="searchInput" type="text" placeholder="Buscar modelos..." 
-             class="bg-zinc-900 border border-zinc-800 focus:border-lime-400 rounded-3xl px-6 py-3 w-96 outline-none">
-      
+  <div class="flex-1 flex flex-col">
+    <!-- TOP HEADER -->
+    <header class="bg-black border-b border-zinc-900 px-8 py-5 flex items-center justify-between">
+      <div class="flex-1 max-w-xl">
+        <input id="searchInput" type="text" placeholder="Buscar modelos, categorias ou criadores..." 
+               class="w-full bg-zinc-900 border border-zinc-800 focus:border-lime-400 rounded-3xl px-6 py-4 text-sm outline-none">
+      </div>
       <div class="flex items-center gap-6">
         <div onclick="toggleCart()" class="relative cursor-pointer">
-          <span class="text-2xl">🛒</span>
-          <span id="cartCount" class="absolute -top-1 -right-1 bg-lime-400 text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          <i class="fa-solid fa-shopping-cart text-2xl"></i>
+          <span id="cartCount" class="absolute -top-2 -right-2 bg-lime-400 text-black text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
         </div>
-        <button onclick="showAuthModal()" class="bg-lime-400 text-black px-6 py-2 rounded-3xl font-semibold">Entrar / Cadastrar</button>
+        <button onclick="showAuthModal()" id="authBtn"
+                class="bg-lime-400 hover:bg-lime-300 transition text-black font-semibold px-8 py-3 rounded-3xl">Entrar</button>
       </div>
     </header>
 
-    <div class="p-8">
-      <h2 class="text-4xl font-semibold mb-8">Todos os Modelos</h2>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="productGrid"></div>
-    </div>
+    <!-- CONTENT -->
+    <main class="flex-1 overflow-auto p-8">
+      <h1 class="text-4xl font-bold mb-2">Todos os Modelos</h1>
+      <p class="text-zinc-400 mb-10">156 modelos disponíveis • Atualizados hoje</p>
+      
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="productGrid"></div>
+    </main>
   </div>
 </div>
 
-<!-- CARRINHO MODAL -->
-<div id="cartModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-  <div class="bg-zinc-900 w-full max-w-lg rounded-3xl p-8">
-    <h3 class="text-2xl font-semibold mb-6">Seu Carrinho</h3>
-    <div id="cartItems" class="space-y-4 mb-6"></div>
-    <div class="border-t border-zinc-700 pt-4 flex justify-between text-xl">
-      <span>Total:</span>
-      <span id="cartTotal" class="font-bold text-lime-400">R$ 0</span>
-    </div>
-    <button onclick="checkout()" class="w-full mt-6 bg-lime-400 text-black py-4 rounded-2xl font-bold">Finalizar Compra via WhatsApp</button>
-    <button onclick="toggleCart()" class="w-full mt-3 text-zinc-400">Fechar</button>
-  </div>
-</div>
-
-<!-- AUTH MODAL (Login / Cadastro) -->
-<div id="authModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+<!-- AUTH MODAL -->
+<div id="authModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center modal">
   <div class="bg-zinc-900 rounded-3xl w-full max-w-md p-10">
-    <h2 id="modalTitle" class="text-3xl font-semibold text-center mb-8">Entrar</h2>
-    
-    <input id="emailInput" type="email" placeholder="E-mail" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-3">
-    <input id="passwordInput" type="password" placeholder="Senha" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-6">
-    
-    <button onclick="handleAuth()" id="authButton" 
-            class="w-full bg-lime-400 text-black py-4 rounded-2xl font-bold">Entrar</button>
-    
-    <p onclick="toggleAuthMode()" id="switchText" class="text-center text-lime-400 mt-6 cursor-pointer">Não tem conta? Cadastre-se</p>
-    <p onclick="hideAuthModal()" class="text-center text-zinc-500 mt-8 cursor-pointer">Fechar</p>
+    <h2 id="modalTitle" class="text-3xl font-bold text-center mb-8">Entrar na sua conta</h2>
+    <input id="email" type="email" placeholder="E-mail" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-4">
+    <input id="password" type="password" placeholder="Senha" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 mb-6">
+    <button onclick="handleAuth()" id="authActionBtn" class="w-full bg-lime-400 text-black font-bold py-4 rounded-2xl">Entrar</button>
+    <p onclick="toggleAuthMode()" id="switchMode" class="text-center text-lime-400 mt-6 cursor-pointer text-sm">Não tem conta? Criar agora</p>
+    <button onclick="hideAuthModal()" class="text-zinc-500 text-sm w-full mt-8">Fechar</button>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center modal">
+  <div class="bg-zinc-900 rounded-3xl w-full max-w-lg p-8">
+    <h2 class="text-2xl font-bold mb-6">Seu Carrinho</h2>
+    <div id="cartContent" class="max-h-96 overflow-y-auto space-y-4 mb-6"></div>
+    <div class="flex justify-between text-xl font-semibold border-t border-zinc-700 pt-6">
+      <span>Total</span>
+      <span id="cartTotal" class="text-lime-400">R$ 0,00</span>
+    </div>
+    <button onclick="finalizePurchase()" class="w-full mt-6 bg-lime-400 text-black font-bold py-4 rounded-2xl">Finalizar Pedido via WhatsApp</button>
+    <button onclick="hideCartModal()" class="w-full mt-3 text-zinc-400">Fechar</button>
   </div>
 </div>
 
 <script>
-// ==================== ESTADO ====================
-let currentUser = null;
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let isLoginMode = true;
+// ==================== ESTADO GLOBAL ====================
+let currentUser = JSON.parse(localStorage.getItem('eliteUser')) || null;
+let cart = JSON.parse(localStorage.getItem('eliteCart')) || [];
 
 // ==================== PRODUTOS ====================
 const products = [
-  {id:1, name:"Dragão Realista 180mm", price:49, img:"https://picsum.photos/id/1015/600/600"},
-  {id:2, name:"Robô Cyberpunk", price:79, img:"https://picsum.photos/id/201/600/600"},
-  {id:3, name:"Casa Medieval", price:65, img:"https://picsum.photos/id/30/600/600"},
-  {id:4, name:"Máscara Mandalorian", price:95, img:"https://picsum.photos/id/160/600/600"},
-  {id:5, name:"Pistola Sci-Fi", price:55, img:"https://picsum.photos/id/180/600/600"},
-  {id:6, name:"Busto Samurai", price:45, img:"https://picsum.photos/id/211/600/600"},
+  {id:1, name:"Dragão Realista 180mm", price:49, time:"4h", img:"https://picsum.photos/id/1015/600/600"},
+  {id:2, name:"Robô Cyberpunk Articulado", price:79, time:"6h", img:"https://picsum.photos/id/201/600/600"},
+  {id:3, name:"Casa Medieval Completa", price:65, time:"8h", img:"https://picsum.photos/id/30/600/600"},
+  {id:4, name:"Máscara Mandalorian 1:1", price:95, time:"5h", img:"https://picsum.photos/id/160/600/600"},
+  {id:5, name:"Pistola Neon Sci-Fi", price:55, time:"3h", img:"https://picsum.photos/id/180/600/600"},
+  {id:6, name:"Busto Samurai Detalhado", price:45, time:"4h", img:"https://picsum.photos/id/211/600/600"},
+  {id:7, name:"Mech Titan V2", price:129, time:"12h", img:"https://picsum.photos/id/251/600/600"},
+  {id:8, name:"Suporte LED Goku", price:35, time:"2h", img:"https://picsum.photos/id/29/600/600"}
 ];
 
-// ==================== RENDER ====================
+// ==================== RENDER CATÁLOGO ====================
 function renderProducts() {
   const container = document.getElementById('productGrid');
-  container.innerHTML = products.map(p => `
-    <div class="bg-zinc-900 rounded-3xl overflow-hidden card-hover">
-      <img src="${p.img}" class="w-full h-64 object-cover">
+  container.innerHTML = products.map(product => `
+    <div class="product-card bg-zinc-900 rounded-3xl overflow-hidden cursor-pointer">
+      <img src="${product.img}" class="w-full h-60 object-cover">
       <div class="p-5">
-        <h3 class="font-semibold">${p.name}</h3>
-        <p class="text-lime-400 text-2xl font-bold mt-2">R$ ${p.price}</p>
-        <div class="flex gap-3 mt-4">
-          <button onclick="addToCart(${p.id}); event.stopImmediatePropagation()" 
-                  class="flex-1 bg-zinc-800 hover:bg-zinc-700 py-3 rounded-2xl text-sm font-medium">Adicionar ao Carrinho</button>
-          <button onclick="buyNow(${p.id}); event.stopImmediatePropagation()" 
-                  class="flex-1 bg-lime-400 text-black py-3 rounded-2xl text-sm font-bold">Comprar Agora</button>
+        <h3 class="font-semibold text-lg">${product.name}</h3>
+        <div class="flex justify-between items-center mt-4">
+          <span class="text-3xl font-bold text-lime-400">R$ ${product.price}</span>
+          <span class="text-xs bg-zinc-800 px-4 py-2 rounded-3xl">${product.time}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-5">
+          <button onclick="addToCart(${product.id}); event.stopImmediatePropagation()" 
+                  class="py-3 bg-zinc-800 hover:bg-zinc-700 rounded-2xl text-sm font-medium">+ Carrinho</button>
+          <button onclick="buyNow(${product.id}); event.stopImmediatePropagation()" 
+                  class="py-3 bg-lime-400 hover:bg-lime-300 text-black rounded-2xl text-sm font-bold">Comprar Agora</button>
         </div>
       </div>
     </div>
@@ -152,9 +163,9 @@ function addToCart(id) {
   }
   const product = products.find(p => p.id === id);
   cart.push(product);
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('eliteCart', JSON.stringify(cart));
   updateCartCount();
-  alert(`${product.name} adicionado ao carrinho!`);
+  alert(`${product.name} foi adicionado ao carrinho!`);
 }
 
 function updateCartCount() {
@@ -163,39 +174,56 @@ function updateCartCount() {
 
 function toggleCart() {
   if (!currentUser) {
-    alert("Faça login para ver o carrinho.");
     showAuthModal();
     return;
   }
   const modal = document.getElementById('cartModal');
-  const itemsContainer = document.getElementById('cartItems');
+  const content = document.getElementById('cartContent');
   let total = 0;
 
-  itemsContainer.innerHTML = cart.map((item, index) => {
+  content.innerHTML = cart.map((item, index) => {
     total += item.price;
-    return `<div class="flex justify-between bg-zinc-800 p-4 rounded-2xl"><span>${item.name}</span><span class="text-lime-400">R$ ${item.price}</span></div>`;
+    return `
+      <div class="flex justify-between items-center bg-zinc-800 p-4 rounded-2xl">
+        <span>${item.name}</span>
+        <div class="flex items-center gap-4">
+          <span class="text-lime-400 font-bold">R$ ${item.price}</span>
+          <button onclick="removeFromCart(${index}); event.stopImmediatePropagation()" class="text-red-400 text-sm">Remover</button>
+        </div>
+      </div>`;
   }).join('');
 
-  document.getElementById('cartTotal').textContent = `R$ ${total}`;
-  modal.classList.toggle('hidden');
+  document.getElementById('cartTotal').textContent = `R$ ${total},00`;
+  modal.classList.remove('hidden');
 }
 
-function checkout() {
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  localStorage.setItem('eliteCart', JSON.stringify(cart));
+  toggleCart();
+  updateCartCount();
+}
+
+function hideCartModal() {
+  document.getElementById('cartModal').classList.add('hidden');
+}
+
+function finalizePurchase() {
   if (cart.length === 0) return;
   const total = cart.reduce((sum, item) => sum + item.price, 0);
-  const message = `Olá! Gostaria de comprar os seguintes modelos:\n\n${cart.map(item => `- ${item.name} (R$ ${item.price})`).join('\n')}\n\nTotal: R$ ${total}`;
+  const message = `Olá! Gostaria de finalizar a compra dos seguintes itens:\n\n${cart.map(i => `• ${i.name} - R$ ${i.price}`).join('\n')}\n\nTotal: R$ ${total}`;
   window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(message)}`, '_blank');
   cart = [];
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('eliteCart', JSON.stringify(cart));
   updateCartCount();
-  toggleCart();
+  hideCartModal();
 }
 
 // ==================== AUTH ====================
 function showAuthModal() {
   document.getElementById('authModal').classList.remove('hidden');
-  document.getElementById('modalTitle').textContent = isLoginMode ? "Entrar" : "Criar Conta";
-  document.getElementById('authButton').textContent = isLoginMode ? "Entrar" : "Cadastrar";
+  document.getElementById('modalTitle').textContent = "Entrar na sua conta";
+  document.getElementById('authActionBtn').textContent = "Entrar";
 }
 
 function hideAuthModal() {
@@ -203,26 +231,29 @@ function hideAuthModal() {
 }
 
 function toggleAuthMode() {
-  isLoginMode = !isLoginMode;
-  showAuthModal();
+  const title = document.getElementById('modalTitle');
+  const btn = document.getElementById('authActionBtn');
+  if (title.textContent.includes("Entrar")) {
+    title.textContent = "Criar nova conta";
+    btn.textContent = "Cadastrar";
+  } else {
+    title.textContent = "Entrar na sua conta";
+    btn.textContent = "Entrar";
+  }
 }
 
 function handleAuth() {
-  const email = document.getElementById('emailInput').value;
-  if (!email) return alert("Digite seu e-mail");
+  const email = document.getElementById('email').value.trim();
+  if (!email) return alert("Digite um e-mail válido");
 
-  currentUser = { email: email };
-  localStorage.setItem('user', JSON.stringify(currentUser));
-  alert(isLoginMode ? "Login realizado com sucesso!" : "Conta criada com sucesso!");
+  currentUser = { email: email, name: email.split('@')[0] };
+  localStorage.setItem('eliteUser', JSON.stringify(currentUser));
+  alert("Conta configurada com sucesso!");
   hideAuthModal();
-  updateUIAfterLogin();
+  document.getElementById('authBtn').innerHTML = `👤 ${currentUser.name}`;
 }
 
-function updateUIAfterLogin() {
-  // Aqui você pode mudar o botão de "Entrar" para o nome do usuário no futuro
-}
-
-// ==================== COMPRAR AGORA ====================
+// ==================== COMPRA RÁPIDA ====================
 function buyNow(id) {
   if (!currentUser) {
     alert("Você precisa estar logado para comprar.");
@@ -230,25 +261,28 @@ function buyNow(id) {
     return;
   }
   const product = products.find(p => p.id === id);
-  const message = `Quero comprar: ${product.name} - R$ ${product.price}`;
+  const message = `Quero comprar:\n• ${product.name}\nValor: R$ ${product.price}\n\nPode me passar os dados para pagamento?`;
   window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-// ==================== NAVEGAÇÃO ====================
-function navigate(page) {
-  alert(`Navegando para: ${page} (Funcionalidade simulada)`);
+// ==================== OUTRAS FUNÇÕES ====================
+function navigateTo(page) {
+  alert(`Navegando para: ${page} (página simulada - em produção seria uma rota)`);
 }
 
-function filterCategory(cat) {
-  alert(`Filtrando por categoria: ${cat} (Funcionalidade simulada)`);
+function filterByCategory(el) {
+  document.querySelectorAll('.category-item').forEach(item => item.classList.remove('bg-zinc-800'));
+  el.classList.add('bg-zinc-800');
+  alert("Filtro aplicado: " + el.textContent.trim());
 }
 
-// ==================== INIT ====================
+// ==================== INICIALIZAÇÃO ====================
 renderProducts();
 updateCartCount();
 
-if (localStorage.getItem('user')) {
-  currentUser = JSON.parse(localStorage.getItem('user'));
+if (localStorage.getItem('eliteUser')) {
+  currentUser = JSON.parse(localStorage.getItem('eliteUser'));
+  document.getElementById('authBtn').innerHTML = `👤 ${currentUser.name}`;
 }
 </script>
 </body>
