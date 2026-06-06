@@ -1,333 +1,2104 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite STL | Marketplace 3D Premium</title>
-    
-    <!-- === BIBLIOTECAS === -->
+    <title>Elite STL — Marketplace de Arquivos 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
-    <!-- === CONFIGURAÇÃO DO TEMA TAIWIND === -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        dark: {
-                            base: '#050505',    // Fundo mais profundo e elegante
-                            panel: '#0E0E11',   // Painéis e Sidebar
-                            surface: '#16161A', // Cards de produtos
-                            border: '#27272A',  // Linhas divisórias sutis
-                            text: '#A1A1AA',    // Cinza para leitura
-                        },
-                        brand: {
-                            DEFAULT: '#D99A3D', // O Dourado Oficial
-                            hover: '#F2AF4A',   // Dourado mais claro pro hover
-                            glow: 'rgba(217, 154, 61, 0.15)' // Brilho
-                        },
-                        drive: {
-                            card: '#0D131C',    // Azul escuro elegante do card Drive
-                        }
+                        gold: { 300: '#e5c585', 400: '#d4a574', 500: '#b8935a', 600: '#9a7b4a' },
+                        dark: { 50: '#2a2a2a', 100: '#222', 200: '#1a1a1a', 300: '#141414', 400: '#111111', 500: '#0a0a0a', 600: '#080808', 700: '#050505' }
                     },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                    fontFamily: { inter: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
-
-    <!-- === ESTILOS CUSTOMIZADOS (Animações e Scroll) === -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; overflow-x: hidden; }
         
-        body { 
-            background-color: #050505; 
-            color: #FFFFFF; 
-            -webkit-font-smoothing: antialiased;
+        /* ============================================
+           SCROLLBAR CUSTOM
+           ============================================ */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #d4a574; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e5c585; }
+
+        /* ============================================
+           GLASSMORPHISM & EFFECTS
+           ============================================ */
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); }
+        .glass-strong { background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.08); }
+        .glass-dark { background: rgba(0,0,0,0.3); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+
+        /* ============================================
+           GLOW EFFECTS
+           ============================================ */
+        .glow-gold { box-shadow: 0 0 20px rgba(212,165,116,0.15), 0 0 60px rgba(212,165,116,0.05); }
+        .glow-gold-hover:hover { box-shadow: 0 0 30px rgba(212,165,116,0.25), 0 0 80px rgba(212,165,116,0.1); }
+        .text-glow-gold { text-shadow: 0 0 20px rgba(212,165,116,0.5); }
+        
+        /* ============================================
+           CARD HOVER EFFECTS
+           ============================================ */
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 20px 60px rgba(212,165,116,0.1), 0 0 0 1px rgba(212,165,116,0.2); 
         }
 
-        /* Scrollbar Invisível/Elegante */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #27272A; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D99A3D; }
-        
-        /* Sistema de Rotas (Páginas) */
-        .page-view { display: none; opacity: 0; }
-        .page-view.active { display: block; animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes fadeSlideUp { 
-            from { opacity: 0; transform: translateY(15px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        /* ============================================
+           SIDEBAR NAVIGATION
+           ============================================ */
+        .sidebar-link { transition: all 0.3s ease; position: relative; overflow: hidden; border-left: 3px solid transparent; }
+        .sidebar-link::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 3px; background: #d4a574; transform: scaleY(0); transition: transform 0.3s ease; border-radius: 0 2px 2px 0; }
+        .sidebar-link:hover::before, .sidebar-link.active::before { transform: scaleY(1); }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(212,165,116,0.08); color: #e5c585; }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn-gold { 
+            background: linear-gradient(135deg, #d4a574, #9a7b4a); 
+            transition: all 0.3s ease; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .btn-gold::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: -100%; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); 
+            transition: left 0.5s ease; 
+        }
+        .btn-gold:hover::before { left: 100%; }
+        .btn-gold:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 30px rgba(212,165,116,0.3); 
         }
 
-        /* Efeito Textura Opcional */
-        .bg-grid-pattern {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 24px 24px;
+        .btn-outline {
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-outline:hover {
+            border-color: rgba(212,165,116,0.5);
+            background: rgba(212,165,116,0.05);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        .fade-in { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        .fade-in-up { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+        .fade-in-down { animation: fadeInDown 0.4s ease forwards; opacity: 0; }
+        .scale-in { animation: scaleIn 0.3s ease forwards; opacity: 0; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes pulse-gold { 
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212,165,116,0.4); } 
+            50% { box-shadow: 0 0 0 10px rgba(212,165,116,0); } 
+        }
+
+        /* ============================================
+           UTILITY CLASSES
+           ============================================ */
+        .gradient-text-gold { 
+            background: linear-gradient(135deg, #e5c585, #d4a574, #9a7b4a); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+        }
+
+        .modal-overlay { 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(10px); 
+        }
+
+        .toast { 
+            animation: slideInRight 0.4s ease, fadeIn 0.4s ease; 
+        }
+
+        .file-item { 
+            transition: all 0.3s ease; 
+        }
+        .file-item:hover { 
+            background: rgba(212,165,116,0.05); 
+            transform: translateX(4px); 
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .sidebar-desktop { display: none; }
+            .main-content { margin-left: 0 !important; }
         }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden text-sm bg-grid-pattern">
+<body class="font-inter">
 
-    <!-- ========================================== -->
-    <!-- 1. SIDEBAR (MENU LATERAL)                  -->
-    <!-- ========================================== -->
-    <aside class="w-64 bg-dark-panel/90 backdrop-blur-xl border-r border-dark-border flex flex-col h-full z-40 hidden md:flex shrink-0 shadow-2xl relative">
-        
+    <!-- ============================================
+         TOAST NOTIFICATIONS
+         ============================================ -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-[200] flex flex-col gap-3"></div>
+
+    <!-- ============================================
+         SIDEBAR MOBILE OVERLAY
+         ============================================ -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-[90] hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- ============================================
+         SIDEBAR
+         ============================================ -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-dark-600/95 backdrop-blur-xl border-r border-white/5 z-[95] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col sidebar-desktop lg:block">
         <!-- Logo -->
-        <div class="h-20 px-6 flex items-center gap-4 border-b border-dark-border/50 shrink-0">
-            <div class="bg-gradient-to-br from-brand to-brand-hover text-black w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(217,154,61,0.4)]">
-                <i class="ph-fill ph-cube"></i>
-            </div>
-            <div class="flex flex-col">
-                <span class="font-bold text-xl tracking-tight text-white leading-none">EliteSTL</span>
-                <span class="text-[9px] font-bold text-brand tracking-[0.2em] uppercase mt-0.5">Marketplace</span>
+        <div class="p-6 border-b border-white/5">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center glow-gold">
+                    <i class="fas fa-cube text-black text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Elite<span class="gradient-text-gold">STL</span></h1>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest">Marketplace 3D</p>
+                </div>
             </div>
         </div>
 
-        <!-- Links de Navegação -->
-        <div class="flex-1 py-6 flex flex-col gap-8 px-4 overflow-y-auto">
-            <div>
-                <span class="text-[10px] font-bold text-dark-text tracking-widest mb-4 block px-3">MENU PRINCIPAL</span>
-                <nav class="flex flex-col gap-1.5">
-                    <!-- Botão Ativo -->
-                    <button onclick="navigate('home')" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand/10 text-brand font-semibold relative overflow-hidden transition-all hover:bg-brand/20">
-                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-brand rounded-r-full shadow-[0_0_10px_rgba(217,154,61,1)]"></div>
-                        <i class="ph-fill ph-house text-xl"></i> Início
-                    </button>
-                    <!-- Botão Inativo -->
-                    <button class="flex items-center gap-3 px-4 py-3 rounded-xl text-dark-text hover:text-white hover:bg-dark-surface transition-all font-medium group">
-                        <i class="ph ph-folder text-xl group-hover:text-brand transition-colors"></i> Meus Acessos
-                    </button>
-                </nav>
+        <!-- Navegação -->
+        <nav class="flex-1 py-4 px-3 overflow-y-auto">
+            <div class="mb-6">
+                <p class="text-[10px] text-gray-600 uppercase tracking-widest px-4 mb-2">Menu Principal</p>
+                <a onclick="navigateTo('home')" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm" data-page="home">
+                    <i class="fas fa-home w-5 text-center"></i> <span>Início</span>
+                </a>
+                <a onclick="navigateTo('catalogos')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm" data-page="catalogos">
+                    <i class="fas fa-folder w-5 text-center"></i> <span>Catálogos</span>
+                </a>
+                <a onclick="navigateTo('all')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm" data-page="all">
+                    <i class="fas fa-th-large w-5 text-center"></i> <span>Todos os Modelos</span>
+                </a>
             </div>
-        </div>
 
-        <!-- Perfil do Usuário (Base da Sidebar) -->
-        <div class="p-4 border-t border-dark-border/50 bg-dark-panel">
-            <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-dark-surface transition cursor-pointer">
-                <div class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-text">
-                    <i class="ph-fill ph-user text-xl"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-sm font-semibold text-white">Visitante</span>
-                    <span class="text-xs text-dark-text">Fazer Login</span>
-                </div>
+            <div class="mb-6">
+                <p class="text-[10px] text-gray-600 uppercase tracking-widest px-4 mb-2">Categorias</p>
+                <a onclick="filterCategory('Miniaturas')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-chess-knight w-5 text-center"></i> <span>Miniaturas</span>
+                </a>
+                <a onclick="filterCategory('Decoração')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-couch w-5 text-center"></i> <span>Decoração</span>
+                </a>
+                <a onclick="filterCategory('Peças Mecânicas')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-cogs w-5 text-center"></i> <span>Peças Mecânicas</span>
+                </a>
+                <a onclick="filterCategory('Cosplay')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-mask w-5 text-center"></i> <span>Cosplay & Props</span>
+                </a>
+                <a onclick="filterCategory('Jogos')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-gamepad w-5 text-center"></i> <span>Jogos & Geek</span>
+                </a>
+                <a onclick="filterCategory('Ferramentas')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-wrench w-5 text-center"></i> <span>Ferramentas</span>
+                </a>
+                <a onclick="filterCategory('Educação')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-graduation-cap w-5 text-center"></i> <span>Educação</span>
+                </a>
+                <a onclick="filterCategory('Arte')" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer text-sm">
+                    <i class="fas fa-palette w-5 text-center"></i> <span>Arte & Escultura</span>
+                </a>
             </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-white/5">
+            <a href="https://wa.me/5500000000000" target="_blank" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-all text-sm">
+                <i class="fab fa-whatsapp text-lg"></i> <span>Suporte via WhatsApp</span>
+            </a>
         </div>
     </aside>
 
-    <!-- ========================================== -->
-    <!-- 2. ÁREA DE CONTEÚDO PRINCIPAL              -->
-    <!-- ========================================== -->
-    <main class="flex-1 flex flex-col h-screen relative">
-        
-        <!-- HEADER (Busca e Ícones) -->
-        <header class="h-20 border-b border-dark-border/50 flex items-center justify-between px-8 shrink-0 bg-dark-base/80 backdrop-blur-md z-30 sticky top-0">
-            <div class="relative w-full max-w-lg hidden md:block group">
-                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-dark-text text-lg group-focus-within:text-brand transition-colors"></i>
-                <input type="text" placeholder="Buscar catálogos, pastas, autores..." 
-                       class="w-full bg-dark-surface/50 border border-dark-border rounded-full py-2.5 pl-12 pr-4 text-white placeholder-dark-text focus:outline-none focus:border-brand/50 focus:bg-dark-surface focus:ring-4 ring-brand/10 transition-all">
+    <!-- ============================================
+         MAIN CONTENT
+         ============================================ -->
+    <div class="lg:ml-72 min-h-screen main-content transition-all duration-300">
+
+        <!-- ============================================
+             HEADER
+             ============================================ -->
+        <header class="sticky top-0 z-[80] bg-dark-600/80 backdrop-blur-xl border-b border-white/5">
+            <div class="flex items-center justify-between px-4 lg:px-8 py-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+
+                <div class="lg:hidden flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
+                        <i class="fas fa-cube text-black text-sm"></i>
+                    </div>
+                    <span class="font-bold">Elite<span class="gradient-text-gold">STL</span></span>
+                </div>
+
+                <div class="hidden md:flex flex-1 max-w-xl mx-8">
+                    <div class="relative w-full group">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-gold-400 transition-colors"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar modelos 3D, categorias, artistas..."
+                            class="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:bg-white/8 focus:outline-none focus:ring-2 focus:ring-gold-500/20 transition-all text-sm placeholder-gray-500"
+                            oninput="handleSearch(this.value)">
+                        <div id="searchResults" class="absolute top-full left-0 right-0 mt-2 bg-dark-300 border border-white/10 rounded-xl overflow-hidden hidden max-h-80 overflow-y-auto shadow-2xl"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 lg:gap-4">
+                    <button onclick="toggleMobileSearch()" class="md:hidden p-2.5 rounded-xl hover:bg-white/5 transition-colors">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <button onclick="checkAuthAndDo(()=>navigateTo('favorites'))" class="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors" title="Favoritos">
+                        <i class="far fa-heart text-lg"></i>
+                        <span id="favCount" class="hidden absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">0</span>
+                    </button>
+
+                    <button onclick="toggleCart()" class="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors" title="Carrinho">
+                        <i class="fas fa-shopping-bag text-lg"></i>
+                        <span id="cartCount" class="hidden absolute -top-1 -right-1 w-5 h-5 bg-gold-500 text-black text-[10px] rounded-full flex items-center justify-center font-bold">0</span>
+                    </button>
+
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" id="userBtn" class="flex items-center gap-2 p-2 rounded-xl hover:bg-white/5 transition-colors">
+                            <div id="userAvatar" class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center overflow-hidden">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <span id="userName" class="hidden lg:block text-sm font-medium">Entrar</span>
+                            <i class="fas fa-chevron-down text-[10px] text-gray-400 hidden lg:block"></i>
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 top-full mt-2 w-64 bg-dark-300/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden fade-in-down">
+                            <div id="userMenuContent"></div>
+                        </div>
+                    </div>
+
+                    <a href="#" class="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl btn-gold text-black font-bold text-sm">
+                        <i class="fas fa-mobile-alt"></i> Instalar App
+                    </a>
+                </div>
             </div>
-            
-            <div class="flex items-center gap-5 ml-auto">
-                <button class="text-dark-text hover:text-white transition-colors relative">
-                    <i class="ph ph-bell text-2xl"></i>
-                    <span class="absolute top-0 right-0 w-2 h-2 bg-brand rounded-full"></span>
-                </button>
-                <div class="w-px h-6 bg-dark-border"></div>
-                <button class="bg-white text-black font-bold py-2 px-5 rounded-full hover:scale-105 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all">
-                    Acessar Conta
-                </button>
+
+            <div id="mobileSearch" class="hidden md:hidden px-4 pb-4">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                    <input type="text" placeholder="Buscar modelos 3D..."
+                        class="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none text-sm"
+                        oninput="handleSearch(this.value)">
+                </div>
             </div>
         </header>
 
-        <!-- ÁREA SCROLLÁVEL -->
-        <div class="flex-1 overflow-y-auto scroll-smooth relative" id="scroll-area">
+        <!-- ============================================
+             PAGE CONTENT
+             ============================================ -->
+        <main id="mainContent" class="px-4 lg:px-8 py-6">
+            <!-- Conteúdo carregado dinamicamente -->
+        </main>
+
+        <!-- ============================================
+             FOOTER
+             ============================================ -->
+        <footer class="border-t border-white/5 px-4 lg:px-8 py-12 mt-12">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
+                                <i class="fas fa-cube text-black"></i>
+                            </div>
+                            <span class="text-lg font-bold">Elite<span class="gradient-text-gold">STL</span></span>
+                        </div>
+                        <p class="text-sm text-gray-500 leading-relaxed">O maior marketplace de arquivos STL para impressão 3D do Brasil. Qualidade premium em cada modelo.</p>
+                        <div class="flex gap-3 mt-4">
+                            <a href="#" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-gold-500/20 hover:text-gold-400 transition-all"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-gold-500/20 hover:text-gold-400 transition-all"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-gold-500/20 hover:text-gold-400 transition-all"><i class="fab fa-discord"></i></a>
+                            <a href="https://wa.me/5500000000000" target="_blank" class="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center hover:bg-green-500/20 hover:text-green-400 transition-all"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4 text-sm">Marketplace</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" onclick="navigateTo('all')" class="hover:text-gold-400 transition-colors">Todos os Modelos</a></li>
+                            <li><a href="#" onclick="navigateTo('trending')" class="hover:text-gold-400 transition-colors">Tendências</a></li>
+                            <li><a href="#" onclick="navigateTo('bestsellers')" class="hover:text-gold-400 transition-colors">Mais Vendidos</a></li>
+                            <li><a href="#" onclick="navigateTo('new')" class="hover:text-gold-400 transition-colors">Novidades</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4 text-sm">Catálogos</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" onclick="navigateTo('catalogos')" class="hover:text-gold-400 transition-colors">Todos os Catálogos</a></li>
+                            ${CATALOGS.slice(0, 5).map(c => `
+                                <li><a href="#" onclick="navigateTo('catalog/${c.id}')" class="hover:text-gold-400 transition-colors">${c.nome}</a></li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4 text-sm">Suporte</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-gold-400 transition-colors">Central de Ajuda</a></li>
+                            <li><a href="#" class="hover:text-gold-400 transition-colors">Como Comprar</a></li>
+                            <li><a href="https://wa.me/5500000000000" target="_blank" class="hover:text-gold-400 transition-colors">Falar no WhatsApp</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p class="text-xs text-gray-600">© 2025 Elite STL — Lz3. Todos os direitos reservados.</p>
+                    <div class="flex gap-6 text-xs text-gray-600">
+                        <a href="#" class="hover:text-gold-400 transition-colors">Termos de Uso</a>
+                        <a href="#" class="hover:text-gold-400 transition-colors">Privacidade</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ============================================
+         CART SIDEBAR
+         ============================================ -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden" onclick="toggleCart()"></div>
+    <div id="cartSidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-dark-300/95 backdrop-blur-xl border-l border-white/5 z-[105] transform translate-x-full transition-transform duration-400 flex flex-col shadow-2xl">
+        <div class="flex items-center justify-between p-6 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 flex items-center justify-center">
+                    <i class="fas fa-shopping-bag text-gold-400"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">Carrinho</h3>
+                    <p id="cartItemCount" class="text-xs text-gray-500">0 itens</p>
+                </div>
+            </div>
+            <button onclick="toggleCart()" class="p-2 rounded-lg hover:bg-white/5 transition-colors">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6"></div>
+        <div id="cartFooter" class="border-t border-white/5 p-6"></div>
+    </div>
+
+    <!-- ============================================
+         AUTH MODAL
+         ============================================ -->
+    <div id="authModal" class="fixed inset-0 z-[120] hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeAuthModal()"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div id="authModalContent" class="bg-dark-300 border border-white/10 rounded-2xl max-w-md w-full shadow-2xl scale-in"></div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         WHATSAPP FLOATING BUTTON
+         ============================================ -->
+    <a href="https://wa.me/5500000000000?text=Olá! Vim pelo site Elite STL e gostaria de saber mais." target="_blank"
+        class="fixed bottom-6 right-6 z-[80] w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 hover:scale-110 transition-all group">
+        <i class="fab fa-whatsapp text-white text-2xl"></i>
+        <span class="absolute right-full mr-3 bg-dark-300 text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10">
+            Fale conosco!
+        </span>
+    </a>
+
+    <script>
+    // ============================================
+    // 📚 9 CATÁLOGOS (ESTRUTURA ORGANIZADA)
+    // ============================================
+    const CATALOGS = [
+        {
+            id: 1,
+            nome: "Primeiros Passos",
+            descricao: "Aprenda a imprimir modelos 3D com guia completo para iniciantes. Tutoriais passo a passo.",
+            imagem: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=300&fit=crop",
+            cor: "from-green-500/20 to-green-500/5",
+            icone: "fa-play-circle",
+            badge: "GRÁTIS",
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Tutorial_Impressao_3D.pdf", tipo: "pdf", tamanho: "2.4 MB" },
+                { nome: "Configuracao_Bambu_Studio.step", tipo: "step", tamanho: "15 MB" },
+                { nome: "Arquivo_Exemplo.stl", tipo: "stl", tamanho: "1.2 MB" }
+            ]
+        },
+        {
+            id: 2,
+            nome: "Miniaturas",
+            descricao: "Miniaturas detalhadas para jogos de mesa, colecionismo e decoração. Personagens, monstros e cenários.",
+            imagem: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=300&fit=crop",
+            cor: "from-purple-500/20 to-purple-500/5",
+            icone: "fa-chess-knight",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Dragao_Articulado", tipo: "pasta", tamanho: "12 arquivos", itens: 12 },
+                { nome: "Baby_Groot", tipo: "pasta", tamanho: "8 arquivos", itens: 8 },
+                { nome: "Personagens_RPG", tipo: "pasta", tamanho: "25 arquivos", itens: 25 },
+                { nome: "Monstros_Fantasia", tipo: "pasta", tamanho: "18 arquivos", itens: 18 }
+            ]
+        },
+        {
+            id: 3,
+            nome: "Decoração",
+            descricao: "Vasos, luminárias, organizadores e objetos decorativos para deixar sua casa mais bonita.",
+            imagem: "https://images.unsplash.com/photo-1581783898377-1c85fb937427?w=600&h=300&fit=crop",
+            cor: "from-pink-500/20 to-pink-500/5",
+            icone: "fa-couch",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Vasos_Geometricos", tipo: "pasta", tamanho: "10 arquivos", itens: 10 },
+                { nome: "Luminaria_Lua", tipo: "pasta", tamanho: "6 arquivos", itens: 6 },
+                { nome: "Suportes_Plantas", tipo: "pasta", tamanho: "8 arquivos", itens: 8 },
+                { nome: "Quadros_Decorativos", tipo: "pasta", tamanho: "15 arquivos", itens: 15 }
+            ]
+        },
+        {
+            id: 4,
+            nome: "Peças Mecânicas",
+            descricao: "Engrenagens, peças funcionais e componentes mecânicos para projetos industriais e educacionais.",
+            imagem: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=300&fit=crop",
+            cor: "from-blue-500/20 to-blue-500/5",
+            icone: "fa-cogs",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Engrenagens_Planetarias", tipo: "pasta", tamanho: "20 arquivos", itens: 20 },
+                { nome: "Parafusos_Porcas", tipo: "pasta", tamanho: "50 arquivos", itens: 50 },
+                { nome: "Eixos_Rolamentos", tipo: "pasta", tamanho: "15 arquivos", itens: 15 }
+            ]
+        },
+        {
+            id: 5,
+            nome: "Cosplay & Props",
+            descricao: "Capacetes, armaduras, armas e acessórios para cosplay e props de filmes/séries.",
+            imagem: "https://images.unsplash.com/photo-1608889825205-eebdb9fc5806?w=600&h=300&fit=crop",
+            cor: "from-red-500/20 to-red-500/5",
+            icone: "fa-mask",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Capacete_Mandaloriano", tipo: "pasta", tamanho: "30 arquivos", itens: 30 },
+                { nome: "Espada_Master_Sword", tipo: "pasta", tamanho: "25 arquivos", itens: 25 },
+                { nome: "Armadura_Iron_Man", tipo: "pasta", tamanho: "100 arquivos", itens: 100 }
+            ]
+        },
+        {
+            id: 6,
+            nome: "Chaveiros",
+            descricao: "Chaveiros de todos os tipos: personagens, formatos, personalizados. Ideais para presentes.",
+            imagem: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=600&h=300&fit=crop",
+            cor: "from-green-500/20 to-green-500/5",
+            icone: "fa-key",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Chaveiros_Animais", tipo: "pasta", tamanho: "40 arquivos", itens: 40 },
+                { nome: "Chaveiros_Personagens", tipo: "pasta", tamanho: "60 arquivos", itens: 60 },
+                { nome: "Chaveiros_Nomes", tipo: "pasta", tamanho: "100 arquivos", itens: 100 },
+                { nome: "Chaveiros_Datas", tipo: "pasta", tamanho: "30 arquivos", itens: 30 }
+            ]
+        },
+        {
+            id: 7,
+            nome: "Ferramentas",
+            descricao: "Ferramentas práticas, organizadores e acessórios para sua oficina ou workspace.",
+            imagem: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=300&fit=crop",
+            cor: "from-yellow-500/20 to-yellow-500/5",
+            icone: "fa-wrench",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Organizadores_Mesa", tipo: "pasta", tamanho: "20 arquivos", itens: 20 },
+                { nome: "Ferramentas_Manual", tipo: "pasta", tamanho: "35 arquivos", itens: 35 },
+                { nome: "Suportes_Impressora", tipo: "pasta", tamanho: "15 arquivos", itens: 15 }
+            ]
+        },
+        {
+            id: 8,
+            nome: "Educação",
+            descricao: "Modelos anatômicos, científicos e didáticos para escolas e estudos.",
+            imagem: "https://images.unsplash.com/photo-1559757175-7cb057fba93c?w=600&h=300&fit=crop",
+            cor: "from-cyan-500/20 to-cyan-500/5",
+            icone: "fa-graduation-cap",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Anatomia_Humana", tipo: "pasta", tamanho: "45 arquivos", itens: 45 },
+                { nome: "Sistema_Solar", tipo: "pasta", tamanho: "20 arquivos", itens: 20 },
+                { nome: "Matematicos_Geometricos", tipo: "pasta", tamanho: "30 arquivos", itens: 30 }
+            ]
+        },
+        {
+            id: 9,
+            nome: "Arte & Escultura",
+            descricao: "Bustos, estátuas e peças artísticas esculturais para colecionadores.",
+            imagem: "https://images.unsplash.com/photo-1569017388730-020b5f80a004?w=600&h=300&fit=crop",
+            cor: "from-orange-500/20 to-orange-500/5",
+            icone: "fa-palette",
+            badge: null,
+            googleDriveUrl: "https://drive.google.com/drive/folders/SEU_LINK_AQUI",
+            arquivos: [
+                { nome: "Bustos_Famosos", tipo: "pasta", tamanho: "25 arquivos", itens: 25 },
+                { nome: "Estatuas_Classicas", tipo: "pasta", tamanho: "30 arquivos", itens: 30 },
+                { nome: "Arte_Moderna", tipo: "pasta", tamanho: "18 arquivos", itens: 18 }
+            ]
+        }
+    ];
+
+    // ============================================
+    // 📦 PRODUTOS (COM PREÇO - ÁREA DE VENDAS)
+    // ============================================
+    const PRODUCTS = [
+        {
+            id: 1,
+            nome: "Primeiros Passos",
+            imagem: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=300&fit=crop",
+            preco: "Grátis",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Iniciante",
+            catalogId: 1,
+            isFree: true,
+            isNew: false,
+            isTrending: false,
+            descricao: "Guia completo para iniciantes na impressão 3D.",
+            artista: "Elite STL Oficial",
+            vendas: 5000,
+            avaliacao: 5.0,
+            tags: ["iniciante", "tutorial"]
+        },
+        {
+            id: 2,
+            nome: "Pack STL Basic",
+            imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop",
+            preco: "R$ 149,90",
+            precoAntigo: "R$ 299,90",
+            bloqueado: true,
+            categoria: "Pack",
+            catalogId: 1,
+            isFree: false,
+            isNew: false,
+            isTrending: false,
+            descricao: "Pack com 50 modelos STL básicos.",
+            artista: "Elite STL",
+            vendas: 890,
+            avaliacao: 4.7,
+            tags: ["pack", "básico"]
+        },
+        {
+            id: 3,
+            nome: "Pack STL Premium",
+            imagem: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=300&fit=crop",
+            preco: "R$ 297,90",
+            precoAntigo: "R$ 597,90",
+            bloqueado: true,
+            categoria: "Pack",
+            catalogId: 1,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "Pack premium com +200 modelos exclusivos.",
+            artista: "Elite STL",
+            vendas: 1560,
+            avaliacao: 4.9,
+            tags: ["premium", "pack"]
+        },
+        {
+            id: 4,
+            nome: "Articulated Dragon",
+            imagem: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            preco: "R$ 19,90",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Miniaturas",
+            catalogId: 2,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "Dragão articulado impressionante.",
+            artista: "DragonForge3D",
+            vendas: 3400,
+            avaliacao: 4.9,
+            tags: ["dragão", "articulado"]
+        },
+        {
+            id: 9,
+            nome: "Baby Groot Dancing",
+            imagem: "https://images.unsplash.com/photo-1636051028886-0059ad2383c8?w=400&h=300&fit=crop",
+            preco: "R$ 9,90",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Miniaturas",
+            catalogId: 2,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "Baby Groot dançando em estilo chibi.",
+            artista: "ChibiWorld3D",
+            vendas: 5600,
+            avaliacao: 4.9,
+            tags: ["groot", "marvel"]
+        },
+        {
+            id: 3,
+            nome: "Geometric Vase",
+            imagem: "https://images.unsplash.com/photo-1581783898377-1c85fb937427?w=400&h=300&fit=crop",
+            preco: "R$ 12,90",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Decoração",
+            catalogId: 3,
+            isFree: false,
+            isNew: false,
+            isTrending: false,
+            descricao: "Vaso geométrico moderno.",
+            artista: "ModernDesign3D",
+            vendas: 2100,
+            avaliacao: 4.7,
+            tags: ["vaso", "decoração"]
+        },
+        {
+            id: 6,
+            nome: "Kit Suportes para Planta",
+            imagem: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=300&fit=crop",
+            preco: "R$ 15,90",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Decoração",
+            catalogId: 3,
+            isFree: false,
+            isNew: true,
+            isTrending: false,
+            descricao: "Conjunto de 4 suportes para plantas.",
+            artista: "PlantLovers3D",
+            vendas: 760,
+            avaliacao: 4.5,
+            tags: ["planta", "suporte"]
+        },
+        {
+            id: 13,
+            nome: "Luminária Lua",
+            imagem: "https://images.unsplash.com/photo-1532667449560-72a95c8d381b?w=400&h=300&fit=crop",
+            preco: "R$ 22,90",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Decoração",
+            catalogId: 3,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "Luminária em formato de lua.",
+            artista: "LightDesign3D",
+            vendas: 2400,
+            avaliacao: 4.8,
+            tags: ["luminária", "lua"]
+        },
+        {
+            id: 4,
+            nome: "Engrenagem Planetária",
+            imagem: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=300&fit=crop",
+            preco: "Grátis",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Peças Mecânicas",
+            catalogId: 4,
+            isFree: true,
+            isNew: false,
+            isTrending: true,
+            descricao: "Sistema de engrenagem planetária funcional.",
+            artista: "EngineerPrints",
+            vendas: 4500,
+            avaliacao: 4.6,
+            tags: ["engrenagem", "mecânica"]
+        },
+        {
+            id: 12,
+            nome: "Cubo Engrenagem",
+            imagem: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop",
+            preco: "Grátis",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Peças Mecânicas",
+            catalogId: 4,
+            isFree: true,
+            isNew: false,
+            isTrending: false,
+            descricao: "Cubo de engrenagens decorativo e funcional.",
+            artista: "GearWorks3D",
+            vendas: 3100,
+            avaliacao: 4.3,
+            tags: ["engrenagem", "cubo"]
+        },
+        {
+            id: 2,
+            nome: "Helmet Mandalorian",
+            imagem: "https://images.unsplash.com/photo-1608889825205-eebdb9fc5806?w=400&h=300&fit=crop",
+            preco: "R$ 45,00",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Cosplay",
+            catalogId: 5,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "Capacete Mandaloriano em escala 1:1.",
+            artista: "CosplayMaster",
+            vendas: 980,
+            avaliacao: 4.8,
+            tags: ["cosplay", "star wars"]
+        },
+        {
+            id: 7,
+            nome: "Espada Master Sword",
+            imagem: "https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=400&h=300&fit=crop",
+            preco: "R$ 35,00",
+            precoAntigo: "R$ 59,90",
+            bloqueado: false,
+            categoria: "Cosplay",
+            catalogId: 5,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "Réplica da Master Sword de Zelda.",
+            artista: "GamerProps3D",
+            vendas: 1890,
+            avaliacao: 4.8,
+            tags: ["zelda", "espada"]
+        },
+        {
+            id: 16,
+            nome: "Iron Man Mark 85",
+            imagem: "https://images.unsplash.com/photo-1635863138275-d9b33299680b?w=400&h=300&fit=crop",
+            preco: "R$ 89,90",
+            precoAntigo: "R$ 149,90",
+            bloqueado: false,
+            categoria: "Cosplay",
+            catalogId: 5,
+            isFree: false,
+            isNew: true,
+            isTrending: true,
+            descricao: "Armadura completa do Iron Man Mark 85.",
+            artista: "ArmorSmith3D",
+            vendas: 320,
+            avaliacao: 5.0,
+            tags: ["iron man", "armadura"]
+        },
+        {
+            id: 5,
+            nome: "T-Rex Articulado",
+            imagem: "https://images.unsplash.com/photo-1606567595334-d39972c85dbe?w=400&h=300&fit=crop",
+            preco: "R$ 19,90",
+            precoAntigo: "R$ 34,90",
+            bloqueado: false,
+            categoria: "Jogos",
+            catalogId: 6,
+            isFree: false,
+            isNew: false,
+            isTrending: true,
+            descricao: "T-Rex totalmente articulado, print-in-place!",
+            artista: "ArticulatedDesign",
+            vendas: 3200,
+            avaliacao: 4.9,
+            tags: ["dinossauro", "t-rex"]
+        },
+        {
+            id: 14,
+            nome: "Chess Set Medieval",
+            imagem: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?w=400&h=300&fit=crop",
+            preco: "R$ 49,90",
+            precoAntigo: "R$ 89,90",
+            bloqueado: false,
+            categoria: "Jogos",
+            catalogId: 6,
+            isFree: false,
+            isNew: true,
+            isTrending: false,
+            descricao: "Conjunto completo de xadrez medieval.",
+            artista: "TableTopKing",
+            vendas: 560,
+            avaliacao: 4.9,
+            tags: ["xadrez", "medieval"]
+        },
+        {
+            id: 15,
+            nome: "Flexi Octopus",
+            imagem: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=400&h=300&fit=crop",
+            preco: "Grátis",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Jogos",
+            catalogId: 6,
+            isFree: true,
+            isNew: false,
+            isTrending: true,
+            descricao: "Polvo articulado flexível. O clássico print-in-place!",
+            artista: "FlexiPrints",
+            vendas: 12000,
+            avaliacao: 4.6,
+            tags: ["polvo", "articulado"]
+        },
+        {
+            id: 10,
+            nome: "Organizador Modular",
+            imagem: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
+            preco: "R$ 8,90",
+            precoAntigo: "R$ 14,90",
+            bloqueado: false,
+            categoria: "Ferramentas",
+            catalogId: 7,
+            isFree: false,
+            isNew: true,
+            isTrending: false,
+            descricao: "Sistema organizador modular para mesa.",
+            artista: "FunctionalPrint",
+            vendas: 1200,
+            avaliacao: 4.4,
+            tags: ["organizador", "modular"]
+        },
+        {
+            id: 8,
+            nome: "Anatomia Coração",
+            imagem: "https://images.unsplash.com/photo-1559757175-7cb057fba93c?w=400&h=300&fit=crop",
+            preco: "Grátis",
+            precoAntigo: null,
+            bloqueado: false,
+            categoria: "Educação",
+            catalogId: 8,
+            isFree: true,
+            isNew: false,
+            isTrending: false,
+            descricao: "Modelo anatômico do coração humano.",
+            artista: "MedPrint3D",
+            vendas: 2800,
+            avaliacao: 4.7,
+            tags: ["anatomia", "coração"]
+        },
+        {
+            id: 11,
+            nome: "Busto Kratos",
+            imagem: "https://images.unsplash.com/photo-1569017388730-020b5f80a004?w=400&h=300&fit=crop",
+            preco: "R$ 39,90",
+            precoAntigo: "R$ 69,90",
+            bloqueado: false,
+            categoria: "Arte",
+            catalogId: 9,
+            isFree: false,
+            isNew: true,
+            isTrending: true,
+            descricao: "Busto detalhado de Kratos do God of War.",
+            artista: "SculptMaster",
+            vendas: 890,
+            avaliacao: 5.0,
+            tags: ["kratos", "god of war"]
+        }
+    ];
+
+    // ============================================
+    // 🗂️ STATE MANAGEMENT
+    // ============================================
+    let state = {
+        currentPage: 'home',
+        currentUser: JSON.parse(localStorage.getItem('eliteSTL_user')) || null,
+        cart: JSON.parse(localStorage.getItem('eliteSTL_cart')) || [],
+        favorites: JSON.parse(localStorage.getItem('eliteSTL_favorites')) || [],
+        searchQuery: '',
+        selectedCategory: null,
+        authCallback: null
+    };
+
+    function saveState() {
+        localStorage.setItem('eliteSTL_cart', JSON.stringify(state.cart));
+        localStorage.setItem('eliteSTL_favorites', JSON.stringify(state.favorites));
+        if(state.currentUser) localStorage.setItem('eliteSTL_user', JSON.stringify(state.currentUser));
+        else localStorage.removeItem('eliteSTL_user');
+    }
+
+    // ============================================
+    // 🔔 TOAST NOTIFICATIONS
+    // ============================================
+    function showToast(message, type='info', duration=3000) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle', warning:'fa-exclamation-triangle' };
+        const colors = { success:'text-gold-400 bg-gold-500/10 border-gold-500/20', error:'text-red-400 bg-red-500/10 border-red-500/20', info:'text-blue-400 bg-blue-500/10 border-blue-500/20', warning:'text-yellow-400 bg-yellow-500/10 border-yellow-500/20' };
+        toast.className = `toast flex items-center gap-3 px-5 py-4 rounded-xl border ${colors[type]} backdrop-blur-xl shadow-2xl min-w-[300px]`;
+        toast.innerHTML = `<i class="fas ${icons[type]} text-lg"></i><span class="text-sm font-medium text-white">${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { 
+            toast.style.opacity = '0'; 
+            toast.style.transform = 'translateX(100px)'; 
+            toast.style.transition = 'all 0.3s ease'; 
+            setTimeout(() => toast.remove(), 300); 
+        }, duration);
+    }
+
+    // ============================================
+    // 📱 SIDEBAR TOGGLE
+    // ============================================
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    }
+
+    function toggleMobileSearch() {
+        document.getElementById('mobileSearch').classList.toggle('hidden');
+    }
+
+    // ============================================
+    // 🧭 NAVEGAÇÃO
+    // ============================================
+    function navigateTo(page) {
+        state.currentPage = page;
+        state.selectedCategory = null;
+        updateSidebarActive(page);
+        renderPage();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const sidebar = document.getElementById('sidebar');
+        if(!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) toggleSidebar();
+    }
+
+    function filterCategory(cat) {
+        state.selectedCategory = cat;
+        state.currentPage = 'category';
+        renderPage();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if(window.innerWidth < 1024) toggleSidebar();
+    }
+
+    function updateSidebarActive(page) {
+        document.querySelectorAll('.sidebar-link').forEach(el => {
+            el.classList.remove('active');
+            if(el.dataset.page === page) el.classList.add('active');
+        });
+    }
+
+    // ============================================
+    // 🎨 RENDERIZAR PÁGINAS
+    // ============================================
+    function renderPage() {
+        const main = document.getElementById('mainContent');
+        
+        // Rota para página de catálogo específico
+        if(state.currentPage.startsWith('catalog/')) {
+            const catalogId = parseInt(state.currentPage.split('/')[1]);
+            main.innerHTML = renderCatalogPage(catalogId);
+            observeAnimations();
+            return;
+        }
+
+        switch(state.currentPage) {
+            case 'home': main.innerHTML = renderHomePage(); break;
+            case 'catalogos': main.innerHTML = renderCatalogsPage(); break;
+            case 'all': main.innerHTML = renderProductGrid('Todos os Modelos', PRODUCTS); break;
+            case 'trending': main.innerHTML = renderProductGrid('🔥 Tendências', PRODUCTS.filter(p=>p.isTrending)); break;
+            case 'bestsellers': main.innerHTML = renderProductGrid('🏆 Mais Vendidos', [...PRODUCTS].sort((a,b)=>b.vendas-a.vendas).slice(0,12)); break;
+            case 'new': main.innerHTML = renderProductGrid('✨ Novidades', PRODUCTS.filter(p=>p.isNew)); break;
+            case 'free': main.innerHTML = renderProductGrid('🎁 Modelos Grátis', PRODUCTS.filter(p=>p.isFree)); break;
+            case 'category': main.innerHTML = renderProductGrid(`📂 ${state.selectedCategory}`, PRODUCTS.filter(p=>p.categoria===state.selectedCategory)); break;
+            case 'favorites': main.innerHTML = renderFavoritesPage(); break;
+            case 'profile': main.innerHTML = renderProfilePage(); break;
+            case 'artists': main.innerHTML = renderArtistsPage(); break;
+            case 'search': main.innerHTML = renderSearchPage(); break;
+            default: main.innerHTML = renderHomePage();
+        }
+        observeAnimations();
+    }
+
+    // ============================================
+    // 🏠 HOME PAGE (9 CATÁLOGOS)
+    // ============================================
+    function renderHomePage() {
+        return `
+        <!-- Hero Section -->
+        <section class="relative rounded-2xl overflow-hidden mb-10 fade-in-up">
+            <div class="absolute inset-0 bg-gradient-to-r from-dark-600 via-dark-400/90 to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1631630259742-c0f0b17c6c10?w=1400&h=500&fit=crop')] bg-cover bg-center opacity-40"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-600 via-transparent to-transparent z-10"></div>
+            <div class="relative z-20 px-8 lg:px-16 py-16 lg:py-24">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500/10 border border-gold-500/20 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
+                        <span class="text-gold-400 text-xs font-semibold uppercase tracking-wider">Marketplace Premium 3D</span>
+                    </div>
+                    <h1 class="text-4xl lg:text-6xl font-black mb-4 leading-tight">
+                        Modelos 3D de<br><span class="gradient-text-gold">Elite</span> para suas<br>Impressões
+                    </h1>
+                    <p class="text-gray-400 text-lg mb-8 max-w-lg leading-relaxed">Descubra milhares de arquivos STL profissionais. Organizados em catálogos especiais para você.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="navigateTo('catalogos')" class="btn-gold px-8 py-4 rounded-xl text-black font-bold flex items-center gap-2">
+                            <i class="fas fa-folder-open"></i> Ver Catálogos
+                        </button>
+                        <button onclick="navigateTo('all')" class="btn-outline px-8 py-4 rounded-xl font-semibold flex items-center gap-2">
+                            <i class="fas fa-th-large"></i> Todos os Modelos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 9 CATÁLOGOS ========== -->
+        <section class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">📚 Nossos Catálogos</h2>
+                <button onclick="navigateTo('catalogos')" class="text-sm text-gold-400 hover:text-gold-300 transition-colors flex items-center gap-1">
+                    Ver todos <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </div>
             
-            <!-- ====== VIEW 1: VITRINE DE PASTAS (HOME) ====== -->
-            <div id="view-home" class="page-view active w-full p-6 md:p-10 pb-20">
-                <div class="max-w-7xl mx-auto">
-                    <div class="flex items-end justify-between mb-8">
-                        <div>
-                            <h2 class="text-3xl font-bold text-white tracking-tight">Catálogos Premium</h2>
-                            <p class="text-dark-text mt-1">Navegue pelas pastas e acesse via Google Drive.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${CATALOGS.map((cat, i) => `
+                <div onclick="navigateTo('catalog/${cat.id}')" 
+                     class="card-hover rounded-2xl overflow-hidden glass-strong cursor-pointer group"
+                     style="animation-delay:${i*100}ms">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${cat.imagem}" alt="${cat.nome}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                             onerror="this.src='https://via.placeholder.com/600x300/1a1a1a/d4a574?text=${encodeURIComponent(cat.nome)}'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-400 via-dark-400/50 to-transparent"></div>
+                        
+                        ${cat.badge ? `
+                            <span class="absolute top-3 left-3 bg-lime-500/90 text-black text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 z-10">
+                                <i class="fas fa-gift"></i> ${cat.badge}
+                            </span>
+                        ` : ''}
+                        
+                        <div class="absolute bottom-4 left-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${cat.cor} flex items-center justify-center mb-2">
+                                <i class="fas ${cat.icone} text-xl text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold">${cat.nome}</h3>
                         </div>
                     </div>
                     
-                    <!-- GRID DE CARDS GERADO VIA JS -->
-                    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-400 mb-4 line-clamp-2">${cat.descricao}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">Clique para explorar</span>
+                            <span class="text-xs text-gold-400 group-hover:text-gold-300 transition-colors flex items-center gap-1">
+                                Acessar <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="anim-observe" data-anim="fade-in-up">
+            <div class="text-center py-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4">Pronto para criar algo <span class="gradient-text-gold">incrível</span>?</h2>
+                <p class="text-gray-500 mb-8 max-w-lg mx-auto">Junte-se a milhares de makers e encontre o arquivo STL perfeito.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="navigateTo('all')" class="btn-gold px-8 py-4 rounded-xl text-black font-bold flex items-center gap-2">
+                        <i class="fas fa-cube"></i> Explorar Marketplace
+                    </button>
+                    <a href="https://wa.me/5500000000000" target="_blank" class="btn-outline px-8 py-4 rounded-xl text-green-400 hover:text-green-300 transition-all font-semibold flex items-center gap-2">
+                        <i class="fab fa-whatsapp"></i> Falar Conosco
+                    </a>
                 </div>
             </div>
+        </section>
+        `;
+    }
 
-            <!-- ====== VIEW 2: TELA GOOGLE DRIVE (AÇÃO) ====== -->
-            <div id="view-drive" class="page-view w-full p-6 md:p-10 min-h-full flex flex-col relative">
-                
-                <div class="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center py-10">
-                    
-                    <button onclick="navigate('home')" class="self-start flex items-center gap-2 px-4 py-2 rounded-lg bg-dark-surface border border-dark-border text-dark-text hover:text-white hover:border-brand/50 transition-all mb-10 group">
-                        <i class="ph ph-arrow-left text-lg group-hover:-translate-x-1 transition-transform"></i> Voltar ao início
-                    </button>
+    // ============================================
+    // 📂 PÁGINA DO CATÁLOGO (SEM PREÇO)
+    // ============================================
+    function renderCatalogPage(catalogId) {
+        const catalog = CATALOGS.find(c => c.id === catalogId);
+        if(!catalog) return '<div class="text-center py-20">Catálogo não encontrado</div>';
+        
+        return `
+        <div class="max-w-6xl mx-auto fade-in-up">
+            <!-- Botão Voltar -->
+            <button onclick="navigateTo('home')" class="flex items-center gap-2 text-gray-400 hover:text-gold-400 transition-colors mb-6 group">
+                <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                <span class="text-sm">Voltar aos catálogos</span>
+            </button>
 
-                    <!-- CARD PRINCIPAL DO DRIVE -->
-                    <div class="w-full bg-gradient-to-b from-drive-card to-[#070A0E] rounded-[24px] p-10 md:p-16 flex flex-col items-center justify-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/5 relative overflow-hidden group">
-                        
-                        <!-- Brilho de fundo sutil -->
-                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-brand/10 blur-[100px] rounded-full pointer-events-none"></div>
-
-                        <!-- Ícone -->
-                        <div class="relative mb-6">
-                            <i class="ph-fill ph-folder text-brand text-[80px] drop-shadow-[0_0_20px_rgba(217,154,61,0.3)] group-hover:scale-110 transition-transform duration-500"></i>
+            <!-- Cabeçalho do Catálogo -->
+            <div class="glass-strong rounded-2xl p-6 lg:p-8 mb-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 ${catalog.cor} rounded-full blur-3xl"></div>
+                <div class="relative flex flex-col lg:flex-row gap-6 items-start">
+                    <div class="flex-1">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-500/10 text-gold-400 text-xs font-semibold mb-4">
+                            <i class="fas ${catalog.icone}"></i> ${catalog.badge || 'CATÁLOGO'}
                         </div>
+                        <h1 class="text-3xl lg:text-4xl font-black mb-3">${catalog.nome}</h1>
+                        <p class="text-gray-400 leading-relaxed mb-6">${catalog.descricao}</p>
                         
-                        <!-- Textos -->
-                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">Google Drive</h1>
-                        <p class="text-dark-text text-base md:text-lg mb-10 max-w-lg leading-relaxed">
-                            Este conteúdo é de alto volume e está hospedado em nuvem. Clique abaixo para visualizar os arquivos.
-                        </p>
-                        
-                        <!-- Botão de Ação -->
-                        <a id="drive-action-btn" href="#" target="_blank" class="bg-brand hover:bg-brand-hover text-black font-bold py-4 px-10 rounded-xl flex items-center gap-3 transition-all duration-300 text-lg shadow-[0_10px_30px_rgba(217,154,61,0.25)] hover:shadow-[0_10px_40px_rgba(217,154,61,0.5)] hover:-translate-y-1">
-                            Abrir no Google Drive <i class="ph-bold ph-arrow-up-right text-xl"></i>
+                        <div class="flex flex-wrap gap-4 text-sm mb-6">
+                            <span class="flex items-center gap-2 text-gray-400">
+                                <i class="fas fa-folder text-gold-400"></i> ${catalog.arquivos.length} pastas/arquivos
+                            </span>
+                            <span class="flex items-center gap-2 text-gray-400">
+                                <i class="fas fa-calendar text-gold-400"></i> 2026
+                            </span>
+                        </div>
+
+                        <!-- BOTÃO GOOGLE DRIVE -->
+                        <a href="${catalog.googleDriveUrl}" target="_blank" rel="noopener" 
+                           class="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold transition-all hover:scale-105 shadow-lg hover:shadow-blue-500/25">
+                            <i class="fab fa-google-drive text-xl"></i>
+                            <div class="text-left">
+                                <div class="text-sm">Abrir no Google Drive</div>
+                                <div class="text-xs opacity-80">Clique para acessar os arquivos</div>
+                            </div>
+                            <i class="fas fa-external-link-alt ml-2"></i>
                         </a>
                     </div>
-
-                    <!-- Rodapé do Card (Título dinâmico) -->
-                    <div class="mt-8 text-center flex flex-col items-center">
-                        <span class="text-dark-text text-xs uppercase tracking-[0.2em] font-bold mb-2">Pasta Selecionada</span>
-                        <h2 id="drive-pack-title" class="text-2xl font-bold text-white border-b-2 border-brand/30 pb-1">Nome do Pack</h2>
-                    </div>
-
                 </div>
             </div>
 
-        </div>
-    </main>
-
-    <!-- ========================================== -->
-    <!-- 3. JAVASCRIPT (LÓGICA E BANCO DE DADOS)    -->
-    <!-- ========================================== -->
-    <script>
-        // ----------------------------------------------------
-        // BANCO DE DADOS (Edite aqui seus catálogos)
-        // ----------------------------------------------------
-        const catalogs = [
-            {
-                id: 'pack-2026',
-                title: 'Pack Elite 2026',
-                category: 'Premium',
-                image: 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?q=80&w=600&auto=format&fit=crop', 
-                driveLink: 'https://drive.google.com/drive/folders/SEU_LINK_DO_DRIVE_AQUI' 
-            },
-            {
-                id: 'pack-chaveiros',
-                title: 'Coleção Chaveiros',
-                category: 'Acessórios',
-                image: 'https://images.unsplash.com/photo-1588636400609-b78ccfc11776?q=80&w=600&auto=format&fit=crop',
-                driveLink: 'https://drive.google.com/drive/folders/SEU_LINK_DO_DRIVE_AQUI'
-            },
-            {
-                id: 'pack-action-figures',
-                title: 'Action Figures HD',
-                category: 'Colecionáveis',
-                image: 'https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=600&auto=format&fit=crop',
-                driveLink: 'https://drive.google.com/drive/folders/SEU_LINK_DO_DRIVE_AQUI'
-            },
-            {
-                id: 'pack-decor',
-                title: 'Design de Interiores',
-                category: 'Decoração',
-                image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=600&auto=format&fit=crop',
-                driveLink: 'https://drive.google.com/drive/folders/SEU_LINK_DO_DRIVE_AQUI'
-            }
-            // Copie e cole os blocos acima para adicionar mais.
-        ];
-
-        // ----------------------------------------------------
-        // FUNÇÃO 1: RENDERIZAR OS CARDS NA TELA INICIAL
-        // ----------------------------------------------------
-        function renderCatalogs() {
-            const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = ''; 
-
-            catalogs.forEach(pack => {
-                const card = document.createElement('div');
-                // Estilos do Card Ultra Premium (Glass, bordas sutis, animações suaves)
-                card.className = `
-                    bg-dark-surface border border-dark-border/50 rounded-2xl overflow-hidden 
-                    hover:border-brand/40 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:-translate-y-1.5 
-                    transition-all duration-300 cursor-pointer group flex flex-col relative
-                `;
-                
-                card.innerHTML = `
-                    <!-- Área da Imagem -->
-                    <div class="h-48 overflow-hidden relative bg-dark-base">
-                        <!-- Imagem com zoom suave no hover -->
-                        <img src="${pack.image}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out">
-                        
-                        <!-- Gradiente sobre a imagem para leitura fácil -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-dark-surface via-transparent to-transparent opacity-90"></div>
-                        
-                        <!-- Badge "Drive" Glassmorphism -->
-                        <div class="absolute bottom-3 left-4 bg-black/40 backdrop-blur-md text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 border border-white/10 group-hover:border-brand/50 group-hover:text-brand transition-colors">
-                            <i class="ph-bold ph-google-drive-logo text-sm"></i> Pasta Drive
+            <!-- LISTA DE ARQUIVOS/PASTAS -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-6">Conteúdo do Catálogo</h2>
+                <div class="glass-strong rounded-2xl overflow-hidden">
+                    ${catalog.arquivos.map((arquivo, i) => `
+                    <div class="file-item flex items-center justify-between p-4 lg:p-6 border-b border-white/5 last:border-0 cursor-pointer"
+                         onclick="window.open('${catalog.googleDriveUrl}', '_blank')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl ${arquivo.tipo === 'pasta' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-blue-500/10 text-blue-400'} flex items-center justify-center flex-shrink-0">
+                                <i class="fas ${arquivo.tipo === 'pasta' ? 'fa-folder text-xl' : 'fa-file text-lg'}"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm lg:text-base group-hover:text-gold-400 transition-colors">${arquivo.nome}</h3>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    ${arquivo.tipo === 'pasta' ? `${arquivo.itens} arquivos` : arquivo.tamanho} · ${arquivo.tamanho}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-gray-500 uppercase">${arquivo.tipo === 'pasta' ? 'Pasta' : 'Arquivo'}</span>
+                            <i class="fas fa-external-link-alt text-gray-600 text-sm"></i>
                         </div>
                     </div>
+                    `).join('')}
+                </div>
+            </div>
 
-                    <!-- Textos do Card -->
-                    <div class="p-5 flex-1 flex flex-col justify-center relative">
-                        <span class="text-[10px] text-brand font-bold uppercase tracking-widest mb-1.5">${pack.category}</span>
-                        <h3 class="text-lg font-bold text-white leading-tight group-hover:text-brand transition-colors">${pack.title}</h3>
-                        
-                        <!-- Ícone de seta que aparece no hover -->
-                        <div class="absolute right-5 bottom-5 w-8 h-8 rounded-full bg-dark-base border border-dark-border flex items-center justify-center text-dark-text opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                            <i class="ph-bold ph-arrow-right"></i>
+            <!-- Outros Catálogos -->
+            <div class="mt-12">
+                <h3 class="text-xl font-bold mb-4">Outros Catálogos</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    ${CATALOGS.filter(c => c.id !== catalogId).slice(0, 4).map(c => `
+                        <div onclick="navigateTo('catalog/${c.id}')" class="card-hover glass rounded-xl p-4 cursor-pointer group">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br ${c.cor} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <i class="fas ${c.icone} text-white"></i>
+                            </div>
+                            <h4 class="font-semibold text-sm mb-1 group-hover:text-gold-400 transition-colors">${c.nome}</h4>
+                            <p class="text-xs text-gray-500">${c.arquivos.length} itens</p>
                         </div>
-                    </div>
-                `;
-                
-                // Evento de clique
-                card.onclick = () => openDriveScreen(pack);
-                grid.appendChild(card);
-            });
-        }
+                    `).join('')}
+                </div>
+            </div>
+        </div>`;
+    }
 
-        // ----------------------------------------------------
-        // FUNÇÃO 2: ABRIR A TELA DO GOOGLE DRIVE
-        // ----------------------------------------------------
-        function openDriveScreen(pack) {
-            // Atualiza as informações da tela do Drive baseadas no card clicado
-            document.getElementById('drive-pack-title').innerText = pack.title;
-            document.getElementById('drive-action-btn').href = pack.driveLink;
-
-            // Navega para a tela
-            navigate('drive');
-        }
-
-        // ----------------------------------------------------
-        // FUNÇÃO 3: CONTROLAR NAVEGAÇÃO ENTRE TELAS
-        // ----------------------------------------------------
-        function navigate(viewName) {
-            // Remove classe active de todas
-            document.querySelectorAll('.page-view').forEach(el => {
-                el.classList.remove('active');
-            });
+    // ============================================
+    // 📋 PÁGINA DE TODOS OS CATÁLOGOS
+    // ============================================
+    function renderCatalogsPage() {
+        return `
+        <div class="max-w-6xl mx-auto fade-in-up">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-2">📚 Todos os Catálogos</h1>
+                <p class="text-gray-500">Explore nossos catálogos organizados por tema</p>
+            </div>
             
-            // Joga o scroll pro topo suavemente
-            document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${CATALOGS.map((cat, i) => `
+                <div onclick="navigateTo('catalog/${cat.id}')" 
+                     class="card-hover rounded-2xl overflow-hidden glass-strong cursor-pointer group"
+                     style="animation-delay:${i*100}ms">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${cat.imagem}" alt="${cat.nome}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                             onerror="this.src='https://via.placeholder.com/600x300/1a1a1a/d4a574?text=${encodeURIComponent(cat.nome)}'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-400 via-dark-400/50 to-transparent"></div>
+                        ${cat.badge ? `
+                            <span class="absolute top-3 left-3 bg-lime-500/90 text-black text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 z-10">
+                                <i class="fas fa-gift"></i> ${cat.badge}
+                            </span>
+                        ` : ''}
+                        <div class="absolute bottom-4 left-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${cat.cor} flex items-center justify-center mb-2">
+                                <i class="fas ${cat.icone} text-xl text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold">${cat.nome}</h3>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-gray-400 mb-4 line-clamp-2">${cat.descricao}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">${cat.arquivos.length} itens</span>
+                            <span class="text-xs text-gold-400 group-hover:text-gold-300 transition-colors flex items-center gap-1">
+                                Acessar <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>`;
+    }
 
-            // Adiciona a classe active na view correta (aciona a animação CSS)
-            setTimeout(() => {
-                document.getElementById(`view-${viewName}`).classList.add('active');
-            }, 50); // Pequeno delay pra garantir o reflow da animação
+    // ============================================
+    // 🛍️ PRODUCT CARD (COM PREÇO)
+    // ============================================
+    function renderProductCard(product, index=0) {
+        const isFav = state.favorites.includes(product.id);
+        const inCart = state.cart.some(c => c.id === product.id);
+        const discount = product.precoAntigo ? Math.round((1 - parseFloat(product.preco.replace('R$ ','').replace(',','.')) / parseFloat(product.precoAntigo.replace('R$ ','').replace(',','.'))) * 100) : 0;
+        
+        let badgeHTML = '';
+        if(product.bloqueado) {
+            badgeHTML = '<span class="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-gold-400 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 z-10 border border-gold-500/30"><i class="fas fa-lock"></i> BLOQUEADO</span>';
+        } else if(product.isFree) {
+            badgeHTML = '<span class="absolute top-3 left-3 bg-lime-500/90 text-black text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 z-10"><i class="fas fa-gift"></i> GRÁTIS</span>';
+        } else if(product.isTrending) {
+            badgeHTML = '<span class="absolute top-3 left-3 bg-orange-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 z-10"><i class="fas fa-fire"></i> HOT</span>';
+        } else if(product.isNew) {
+            badgeHTML = '<span class="absolute top-3 left-3 bg-blue-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 z-10"><i class="fas fa-sparkles"></i> NOVO</span>';
+        } else if(discount > 0) {
+            badgeHTML = `<span class="absolute top-3 left-3 bg-red-500/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg z-10">-${discount}%</span>`;
         }
 
-        // ----------------------------------------------------
-        // INICIALIZAÇÃO
-        // ----------------------------------------------------
-        window.onload = renderCatalogs;
+        return `
+        <div class="card-hover rounded-2xl overflow-hidden glass-strong group cursor-pointer" style="animation-delay:${index*80}ms" onclick="openProductModal(${product.id})">
+            <div class="relative aspect-square overflow-hidden bg-dark-500">
+                ${badgeHTML}
+                ${discount > 0 && !product.bloqueado ? `<span class="absolute top-3 right-12 bg-red-500/90 text-white text-[10px] font-bold px-2 py-1 rounded-lg z-10">-${discount}%</span>` : ''}
+                <button onclick="event.stopPropagation(); toggleFavorite(${product.id})" class="absolute top-3 right-3 w-9 h-9 rounded-xl bg-black/50 backdrop-blur-sm flex items-center justify-center z-10 hover:bg-black/70 transition-all ${isFav ? 'text-red-400' : 'text-white/60'}">
+                    <i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>
+                </button>
+                <img src="${product.imagem}" alt="${product.nome}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300/1a1a1a/d4a574?text=Sem+Imagem'">
+                
+                ${product.bloqueado ? `
+                    <div class="lock-overlay absolute inset-0 flex flex-col items-center justify-center z-10">
+                        <i class="fas fa-lock text-4xl text-gold-400 mb-3"></i>
+                        <p class="text-sm text-gray-300 text-center px-4">Você ainda não adquiriu esse produto.</p>
+                    </div>
+                ` : ''}
+
+                <div class="absolute inset-0 bg-gradient-to-t from-dark-400/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                    <button onclick="event.stopPropagation(); addToCart(${product.id})" class="w-full btn-gold py-2.5 rounded-xl text-black font-bold text-sm flex items-center justify-center gap-2">
+                        ${product.isFree ? '<i class="fas fa-download"></i> Download Grátis' : '<i class="fas fa-cart-plus"></i> Adicionar ao Carrinho'}
+                    </button>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 rounded-md">${product.categoria}</span>
+                    <div class="flex items-center gap-1 ml-auto">
+                        <i class="fas fa-star text-yellow-400 text-[10px]"></i>
+                        <span class="text-xs text-gray-400">${product.avaliacao}</span>
+                    </div>
+                </div>
+                <h3 class="font-semibold text-sm mb-2 group-hover:text-gold-400 transition-colors line-clamp-1">${product.nome}</h3>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        ${product.isFree
+                            ? '<span class="text-gold-400 font-bold text-lg">Grátis</span>'
+                            : `<span class="text-gold-400 font-bold text-lg">${product.preco}</span>
+                               ${product.precoAntigo ? `<span class="text-gray-600 line-through text-xs">${product.precoAntigo}</span>` : ''}`
+                        }
+                    </div>
+                    <div class="flex items-center gap-1 text-[10px] text-gray-600">
+                        <i class="fas fa-download"></i> ${formatNumber(product.vendas)}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    // ============================================
+    // 📦 PRODUCT GRID PAGE
+    // ============================================
+    function renderProductGrid(title, products) {
+        if(products.length === 0) {
+            return `
+            <div class="text-center py-20 fade-in-up">
+                <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-cube text-3xl text-gray-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Nenhum modelo encontrado</h2>
+                <p class="text-gray-500 mb-6">Tente buscar por outro termo.</p>
+                <button onclick="navigateTo('home')" class="btn-gold px-6 py-3 rounded-xl text-black font-semibold">Voltar ao Início</button>
+            </div>`;
+        }
+        return `
+        <div class="mb-6 fade-in-up">
+            <h1 class="text-3xl font-bold mb-2">${title}</h1>
+            <p class="text-gray-500 text-sm">${products.length} modelo${products.length!==1?'s':''} encontrado${products.length!==1?'s':''}</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            ${products.map((p,i) => renderProductCard(p,i)).join('')}
+        </div>`;
+    }
+
+    // ============================================
+    // 🔍 MODAL DE PRODUTO
+    // ============================================
+    function openProductModal(productId) {
+        const p = PRODUCTS.find(pr => pr.id === productId);
+        if(!p) return;
+        const isFav = state.favorites.includes(p.id);
+        const inCart = state.cart.some(c => c.id === p.id);
+        const discount = p.precoAntigo ? Math.round((1 - parseFloat(p.preco.replace('R$ ','').replace(',','.')) / parseFloat(p.precoAntigo.replace('R$ ','').replace(',','.'))) * 100) : 0;
+        const related = PRODUCTS.filter(pr => pr.categoria === p.categoria && pr.id !== p.id).slice(0,4);
+
+        const modal = document.getElementById('productModal');
+        const content = document.getElementById('productModalContent');
+        content.innerHTML = `
+        <div class="relative">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-xl bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <div class="grid md:grid-cols-2 gap-0">
+                <div class="relative aspect-square md:aspect-auto bg-dark-500 overflow-hidden">
+                    ${p.bloqueado ? `<span class="absolute top-4 left-4 bg-black/70 backdrop-blur-sm text-gold-400 text-xs font-bold px-3 py-1.5 rounded-lg z-10 border border-gold-500/30"><i class="fas fa-lock mr-1"></i> BLOQUEADO</span>` : ''}
+                    <img src="${p.imagem}" alt="${p.nome}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/600x600/1a1a1a/d4a574?text=Sem+Imagem'">
+                    ${p.bloqueado ? `
+                        <div class="lock-overlay absolute inset-0 flex flex-col items-center justify-center z-10">
+                            <i class="fas fa-lock text-5xl text-gold-400 mb-4"></i>
+                            <p class="text-base text-gray-300 text-center px-6">Você ainda não adquiriu esse produto.</p>
+                            <button onclick="window.open('https://wa.me/5500000000000?text=Olá! Gostaria de adquirir o produto: ${encodeURIComponent(p.nome)}', '_blank')" class="mt-4 btn-gold px-6 py-2.5 rounded-xl text-black font-bold text-sm">
+                                <i class="fab fa-whatsapp mr-2"></i> Consultar no WhatsApp
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="p-6 lg:p-8 flex flex-col">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xs text-gray-500 bg-white/5 px-3 py-1 rounded-lg">${p.categoria}</span>
+                        <div class="flex items-center gap-1">
+                            ${renderStars(p.avaliacao)}
+                            <span class="text-xs text-gray-400 ml-1">${p.avaliacao} (${p.vendas} avaliações)</span>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-2">${p.nome}</h2>
+                    <p class="text-sm text-gray-500 mb-1">por <span class="text-gold-400 font-medium cursor-pointer hover:underline">${p.artista}</span></p>
+
+                    <div class="flex items-center gap-4 mb-6 mt-4">
+                        ${p.isFree
+                            ? '<span class="text-3xl font-black gradient-text-gold">GRÁTIS</span>'
+                            : `<span class="text-3xl font-black text-gold-400">${p.preco}</span>
+                               ${p.precoAntigo ? `<span class="text-lg text-gray-600 line-through">${p.precoAntigo}</span><span class="bg-red-500/20 text-red-400 text-xs font-bold px-2 py-1 rounded-lg">-${discount}%</span>` : ''}`
+                        }
+                    </div>
+
+                    <p class="text-sm text-gray-400 leading-relaxed mb-6">${p.descricao}</p>
+
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        ${p.tags.map(t => `<span class="text-[10px] bg-white/5 text-gray-400 px-2.5 py-1 rounded-lg">#${t}</span>`).join('')}
+                    </div>
+
+                    <div class="mt-auto flex flex-col gap-3">
+                        ${!p.bloqueado ? `
+                            <button onclick="addToCart(${p.id}); closeProductModal();" class="btn-gold w-full py-4 rounded-xl text-black font-bold flex items-center justify-center gap-2 text-sm">
+                                ${p.isFree ? '<i class="fas fa-download"></i> Download Grátis' : inCart ? '<i class="fas fa-check"></i> Já no Carrinho' : '<i class="fas fa-cart-plus"></i> Adicionar ao Carrinho'}
+                            </button>
+                        ` : `
+                            <button onclick="window.open('https://wa.me/5500000000000?text=Olá! Gostaria de adquirir o produto: ${encodeURIComponent(p.nome)}', '_blank')" class="btn-gold w-full py-4 rounded-xl text-black font-bold flex items-center justify-center gap-2 text-sm">
+                                <i class="fab fa-whatsapp"></i> Consultar para Comprar
+                            </button>
+                        `}
+                        <div class="flex gap-3">
+                            <button onclick="toggleFavorite(${p.id}); openProductModal(${p.id});" class="flex-1 py-3 rounded-xl border ${isFav ? 'border-red-500/30 bg-red-500/10 text-red-400' : 'border-white/10 hover:border-gold-500/30 text-gray-400 hover:text-gold-400'} transition-all flex items-center justify-center gap-2 text-sm">
+                                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i> ${isFav ? 'Favoritado' : 'Favoritar'}
+                            </button>
+                            <button onclick="shareProduct(${p.id})" class="flex-1 py-3 rounded-xl border border-white/10 hover:border-gold-500/30 text-gray-400 hover:text-gold-400 transition-all flex items-center justify-center gap-2 text-sm">
+                                <i class="fas fa-share-alt"></i> Compartilhar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ${related.length > 0 ? `
+            <div class="p-6 lg:p-8 border-t border-white/5">
+                <h3 class="font-bold text-lg mb-4">Modelos Relacionados</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    ${related.map(r => `
+                        <div onclick="closeProductModal(); setTimeout(()=>openProductModal(${r.id}),300)" class="cursor-pointer group rounded-xl overflow-hidden glass">
+                            <div class="aspect-square overflow-hidden">
+                                <img src="${r.imagem}" alt="${r.nome}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/200x200/1a1a1a/d4a574?text=Sem+Imagem'">
+                            </div>
+                            <div class="p-3">
+                                <p class="text-xs font-semibold line-clamp-1 group-hover:text-gold-400 transition-colors">${r.nome}</p>
+                                <p class="text-xs ${r.isFree?'text-gold-400':'text-gray-500'} mt-1">${r.isFree ? 'Grátis' : r.preco}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>` : ''}
+        </div>`;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductModal() {
+        document.getElementById('productModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    function shareProduct(id) {
+        const p = PRODUCTS.find(pr=>pr.id===id);
+        const text = `Confira "${p.nome}" no Elite STL! ${p.isFree?'GRÁTIS!':p.preco}`;
+        if(navigator.share) {
+            navigator.share({ title: p.nome, text, url: window.location.href });
+        } else {
+            navigator.clipboard.writeText(text + ' ' + window.location.href);
+            showToast('Link copiado!', 'success');
+        }
+    }
+
+    // ============================================
+    // 🔍 SEARCH
+    // ============================================
+    function handleSearch(query) {
+        state.searchQuery = query;
+        const container = document.getElementById('searchResults');
+        if(!query.trim()) { container.classList.add('hidden'); return; }
+        const results = PRODUCTS.filter(p =>
+            p.nome.toLowerCase().includes(query.toLowerCase()) ||
+            p.categoria.toLowerCase().includes(query.toLowerCase()) ||
+            p.tags.some(t => t.toLowerCase().includes(query.toLowerCase())) ||
+            p.artista.toLowerCase().includes(query.toLowerCase())
+        ).slice(0,6);
+        if(results.length === 0) {
+            container.innerHTML = `<div class="p-6 text-center text-gray-500 text-sm"><i class="fas fa-search mb-2 text-lg"></i><p>Nenhum resultado para "${query}"</p></div>`;
+        } else {
+            container.innerHTML = results.map(p => `
+                <div onclick="document.getElementById('searchInput').value=''; document.getElementById('searchResults').classList.add('hidden'); openProductModal(${p.id})" class="flex items-center gap-4 px-4 py-3 hover:bg-white/5 cursor-pointer transition-colors border-b border-white/5 last:border-0">
+                    <img src="${p.imagem}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" onerror="this.src='https://via.placeholder.com/50x50/1a1a1a/d4a574?text=?'">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">${p.nome}</p>
+                        <p class="text-xs text-gray-500">${p.categoria} · ${p.artista}</p>
+                    </div>
+                    <span class="text-sm font-bold ${p.isFree?'text-gold-400':'text-white'} flex-shrink-0">${p.isFree?'Grátis':p.preco}</span>
+                </div>
+            `).join('') + `<div onclick="state.currentPage='search'; renderPage(); document.getElementById('searchResults').classList.add('hidden');" class="px-4 py-3 text-center text-sm text-gold-400 hover:bg-white/5 cursor-pointer transition-colors">Ver todos os ${results.length} resultados</div>`;
+        }
+        container.classList.remove('hidden');
+    }
+
+    function renderSearchPage() {
+        const q = state.searchQuery;
+        const results = PRODUCTS.filter(p =>
+            p.nome.toLowerCase().includes(q.toLowerCase()) ||
+            p.categoria.toLowerCase().includes(q.toLowerCase()) ||
+            p.tags.some(t => t.toLowerCase().includes(q.toLowerCase())) ||
+            p.artista.toLowerCase().includes(q.toLowerCase())
+        );
+        return renderProductGrid(`🔍 Resultados para "${q}"`, results);
+    }
+
+    document.addEventListener('click', e => {
+        const sr = document.getElementById('searchResults');
+        const si = document.getElementById('searchInput');
+        if(sr && si && !sr.contains(e.target) && !si.contains(e.target)) sr.classList.add('hidden');
+    });
+
+    // ============================================
+    // 🛒 CARRINHO
+    // ============================================
+    function toggleCart() {
+        const sidebar = document.getElementById('cartSidebar');
+        const overlay = document.getElementById('cartOverlay');
+        const isOpen = !sidebar.classList.contains('translate-x-full');
+        if(isOpen) {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        } else {
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderCart();
+        }
+    }
+
+    function addToCart(productId) {
+        const p = PRODUCTS.find(pr => pr.id === productId);
+        if(!p) return;
+        if(p.bloqueado) {
+            showToast('Este produto está bloqueado. Consulte no WhatsApp para adquirir.', 'warning');
+            window.open(`https://wa.me/5500000000000?text=Olá! Gostaria de adquirir o produto: ${encodeURIComponent(p.nome)}`, '_blank');
+            return;
+        }
+        if(p.isFree) {
+            checkAuthAndDo(() => {
+                showToast(`"${p.nome}" pronto para download!`, 'success');
+                const msg = encodeURIComponent(`Olá! Gostaria de baixar o modelo grátis: ${p.nome}`);
+                window.open(`https://wa.me/5500000000000?text=${msg}`, '_blank');
+            });
+            return;
+        }
+        checkAuthAndDo(() => {
+            if(state.cart.some(c => c.id === productId)) {
+                showToast('Este modelo já está no carrinho!', 'warning');
+                return;
+            }
+            state.cart.push({ id: productId, addedAt: Date.now() });
+            saveState();
+            updateCartBadge();
+            showToast(`"${p.nome}" adicionado ao carrinho!`, 'success');
+        });
+    }
+
+    function removeFromCart(productId) {
+        state.cart = state.cart.filter(c => c.id !== productId);
+        saveState();
+        updateCartBadge();
+        renderCart();
+        showToast('Item removido do carrinho', 'info');
+    }
+
+    function clearCart() {
+        state.cart = [];
+        saveState();
+        updateCartBadge();
+        renderCart();
+        showToast('Carrinho limpo', 'info');
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cartItems');
+        const footer = document.getElementById('cartFooter');
+        document.getElementById('cartItemCount').textContent = `${state.cart.length} ite${state.cart.length!==1?'ns':'m'}`;
+
+        if(state.cart.length === 0) {
+            container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-center">
+                <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+                    <i class="fas fa-shopping-bag text-3xl text-gray-600"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Carrinho vazio</h3>
+                <p class="text-sm text-gray-500 mb-6">Adicione modelos para começar!</p>
+                <button onclick="toggleCart(); navigateTo('all')" class="btn-gold px-6 py-3 rounded-xl text-black font-semibold text-sm">Explorar Modelos</button>
+            </div>`;
+            footer.innerHTML = '';
+            return;
+        }
+
+        const cartProducts = state.cart.map(c => PRODUCTS.find(p=>p.id===c.id)).filter(Boolean);
+        const total = cartProducts.reduce((sum,p)=>sum + parseFloat(p.preco.replace('R$ ','').replace(',','.')), 0);
+
+        container.innerHTML = cartProducts.map(p => `
+        <div class="flex gap-4 mb-4 p-3 rounded-xl glass group">
+            <img src="${p.imagem}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0" onerror="this.src='https://via.placeholder.com/80x80/1a1a1a/d4a574?text=?'">
+            <div class="flex-1 min-w-0">
+                <h4 class="font-semibold text-sm truncate">${p.nome}</h4>
+                <p class="text-xs text-gray-500 mt-0.5">${p.categoria}</p>
+                <p class="text-gold-400 font-bold text-sm mt-2">${p.preco}</p>
+            </div>
+            <button onclick="removeFromCart(${p.id})" class="p-2 rounded-lg hover:bg-red-500/10 text-gray-500 hover:text-red-400 transition-all self-start opacity-0 group-hover:opacity-100">
+                <i class="fas fa-trash-alt text-sm"></i>
+            </button>
+        </div>`).join('');
+
+        footer.innerHTML = `
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-gray-400">Subtotal</span>
+            <span class="text-xl font-bold text-gold-400">R$ ${total.toFixed(2).replace('.',',')}</span>
+        </div>
+        <button onclick="checkout()" class="btn-gold w-full py-4 rounded-xl text-black font-bold flex items-center justify-center gap-2 mb-3">
+            <i class="fab fa-whatsapp text-lg"></i> Finalizar via WhatsApp
+        </button>
+        <button onclick="clearCart()" class="w-full py-3 rounded-xl border border-white/10 hover:border-red-500/30 text-gray-400 hover:text-red-400 transition-all text-sm">
+            Limpar Carrinho
+        </button>
+        <p class="text-[10px] text-gray-600 text-center mt-3"><i class="fas fa-lock mr-1"></i> Compra segura · Entrega instantânea por e-mail</p>`;
+    }
+
+    function updateCartBadge() {
+        const badge = document.getElementById('cartCount');
+        if(state.cart.length > 0) {
+            badge.textContent = state.cart.length;
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+        } else {
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+        }
+    }
+
+    function checkout() {
+        if(state.cart.length === 0) return;
+        const cartProducts = state.cart.map(c => PRODUCTS.find(p=>p.id===c.id)).filter(Boolean);
+        const total = cartProducts.reduce((sum,p)=>sum + parseFloat(p.preco.replace('R$ ','').replace(',','.')), 0);
+        let msg = `🛒 *Pedido Elite STL*\n\n`;
+        msg += `👤 *Cliente:* ${state.currentUser?.nome || 'Visitante'}\n`;
+        msg += `📧 *E-mail:* ${state.currentUser?.email || 'N/A'}\n\n`;
+        msg += `📦 *Itens:*\n`;
+        cartProducts.forEach((p,i) => { msg += `${i+1}. ${p.nome} — ${p.preco}\n`; });
+        msg += `\n💰 *Total: R$ ${total.toFixed(2).replace('.',',')}*\n\n`;
+        msg += `Gostaria de finalizar esta compra! 🚀`;
+        window.open(`https://wa.me/5500000000000?text=${encodeURIComponent(msg)}`, '_blank');
+        showToast('Redirecionando para WhatsApp...', 'success');
+    }
+
+    // ============================================
+    // ❤️ FAVORITOS
+    // ============================================
+    function toggleFavorite(productId) {
+        checkAuthAndDo(() => {
+            const idx = state.favorites.indexOf(productId);
+            if(idx > -1) {
+                state.favorites.splice(idx,1);
+                showToast('Removido dos favoritos', 'info');
+            } else {
+                state.favorites.push(productId);
+                showToast('Adicionado aos favoritos!', 'success');
+            }
+            saveState();
+            updateFavBadge();
+            if(state.currentPage === 'favorites') renderPage();
+        });
+    }
+
+    function updateFavBadge() {
+        const badge = document.getElementById('favCount');
+        if(state.favorites.length > 0) {
+            badge.textContent = state.favorites.length;
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+        } else {
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+        }
+    }
+
+    function renderFavoritesPage() {
+        const favProducts = PRODUCTS.filter(p => state.favorites.includes(p.id));
+        if(favProducts.length === 0) {
+            return `
+            <div class="text-center py-20 fade-in-up">
+                <div class="w-20 h-20 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-6">
+                    <i class="far fa-heart text-3xl text-red-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Nenhum favorito ainda</h2>
+                <p class="text-gray-500 mb-6">Explore os modelos e salve seus favoritos aqui!</p>
+                <button onclick="navigateTo('all')" class="btn-gold px-6 py-3 rounded-xl text-black font-semibold">Explorar Modelos</button>
+            </div>`;
+        }
+        return renderProductGrid('❤️ Meus Favoritos', favProducts);
+    }
+
+    // ============================================
+    // 👤 PERFIL DO USUÁRIO
+    // ============================================
+    function renderProfilePage() {
+        if(!state.currentUser) { openAuthModal(); return ''; }
+        const u = state.currentUser;
+        return `
+        <div class="max-w-4xl mx-auto fade-in-up">
+            <div class="glass-strong rounded-2xl p-8 mb-6 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-gold-500/5 to-transparent"></div>
+                <div class="relative flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-3xl font-black text-black glow-gold">
+                        ${u.nome.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h1 class="text-2xl font-bold mb-1">${u.nome}</h1>
+                        <p class="text-gray-500 text-sm mb-3">${u.email}</p>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4 text-sm">
+                            <span class="flex items-center gap-2 text-gray-400"><i class="fas fa-calendar text-gold-400"></i> Membro desde ${new Date(u.joinedAt || Date.now()).toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</span>
+                            <span class="flex items-center gap-2 text-gray-400"><i class="fas fa-heart text-red-400"></i> ${state.favorites.length} favoritos</span>
+                            <span class="flex items-center gap-2 text-gray-400"><i class="fas fa-shopping-bag text-gold-400"></i> ${state.cart.length} no carrinho</span>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="md:ml-auto px-5 py-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all text-sm flex items-center gap-2">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div onclick="navigateTo('favorites')" class="glass-strong rounded-2xl p-6 cursor-pointer hover:border-gold-500/30 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-heart text-red-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">Favoritos</h3>
+                            <p class="text-sm text-gray-500">${state.favorites.length} modelos salvos</p>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="toggleCart()" class="glass-strong rounded-2xl p-6 cursor-pointer hover:border-gold-500/30 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-shopping-bag text-gold-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">Carrinho</h3>
+                            <p class="text-sm text-gray-500">${state.cart.length} itens</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://wa.me/5500000000000?text=Olá! Sou ${encodeURIComponent(u.nome)} e preciso de suporte." target="_blank" class="glass-strong rounded-2xl p-6 cursor-pointer hover:border-green-500/30 transition-all group block">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fab fa-whatsapp text-green-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white">Suporte</h3>
+                            <p class="text-sm text-gray-500">Falar no WhatsApp</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="glass-strong rounded-2xl p-6">
+                <h2 class="text-lg font-bold mb-6 flex items-center gap-2"><i class="fas fa-cog text-gold-400"></i> Configurações da Conta</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Nome</label>
+                        <input type="text" id="profileName" value="${u.nome}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">E-mail</label>
+                        <input type="email" id="profileEmail" value="${u.email}" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none text-sm">
+                    </div>
+                    <button onclick="updateProfile()" class="btn-gold px-6 py-3 rounded-xl text-black font-semibold text-sm flex items-center gap-2">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function updateProfile() {
+        const nome = document.getElementById('profileName').value.trim();
+        const email = document.getElementById('profileEmail').value.trim();
+        if(!nome || !email) { showToast('Preencha todos os campos', 'error'); return; }
+        state.currentUser.nome = nome;
+        state.currentUser.email = email;
+        saveState();
+        updateUserUI();
+        showToast('Perfil atualizado com sucesso!', 'success');
+    }
+
+    // ============================================
+    // 🔐 SISTEMA DE LOGIN
+    // ============================================
+    function checkAuthAndDo(callback) {
+        if(state.currentUser) { callback(); return; }
+        state.authCallback = callback;
+        openAuthModal();
+    }
+
+    function openAuthModal(mode='login') {
+        const modal = document.getElementById('authModal');
+        const content = document.getElementById('authModalContent');
+        content.innerHTML = mode === 'login' ? renderLoginForm() : renderRegisterForm();
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAuthModal() {
+        document.getElementById('authModal').classList.add('hidden');
+        document.body.style.overflow = '';
+        state.authCallback = null;
+    }
+
+    function renderLoginForm() {
+        return `
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center mx-auto mb-4 glow-gold">
+                    <i class="fas fa-cube text-black text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold">Bem-vindo de volta!</h2>
+                <p class="text-sm text-gray-500 mt-1">Entre na sua conta Elite STL</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">E-mail</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                        <input type="email" id="loginEmail" required placeholder="seu@email.com"
+                            class="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm transition-all">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Senha</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" minlength="4"
+                            class="w-full pl-12 pr-12 py-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm transition-all">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-gold w-full py-4 rounded-xl text-black font-bold flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">Não tem conta? <button onclick="openAuthModal('register')" class="text-gold-400 hover:text-gold-300 font-semibold">Criar conta grátis</button></p>
+            </div>
+        </div>`;
+    }
+
+    function renderRegisterForm() {
+        return `
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center mx-auto mb-4 glow-gold">
+                    <i class="fas fa-user-plus text-black text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold">Criar Conta</h2>
+                <p class="text-sm text-gray-500 mt-1">Junte-se à comunidade Elite STL</p>
+            </div>
+            <form onsubmit="handleRegister(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Nome completo</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                        <input type="text" id="regName" required placeholder="Seu nome"
+                            class="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm transition-all">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">E-mail</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                        <input type="email" id="regEmail" required placeholder="seu@email.com"
+                            class="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm transition-all">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Senha</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                        <input type="password" id="regPassword" required placeholder="Mínimo 6 caracteres" minlength="6"
+                            class="w-full pl-12 pr-12 py-3.5 rounded-xl bg-white/5 border border-white/10 focus:border-gold-500/50 focus:outline-none focus:ring-2 focus:ring-gold-500/20 text-sm transition-all">
+                        <button type="button" onclick="togglePasswordVisibility('regPassword', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-gold w-full py-4 rounded-xl text-black font-bold flex items-center justify-center gap-2">
+                    <i class="fas fa-rocket"></i> Criar Conta
+                </button>
+            </form>
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">Já tem conta? <button onclick="openAuthModal('login')" class="text-gold-400 hover:text-gold-300 font-semibold">Fazer login</button></p>
+            </div>
+        </div>`;
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const senha = document.getElementById('loginPassword').value;
+
+        const usuarios = JSON.parse(localStorage.getItem('eliteSTL_usuarios') || '[]');
+        const usuario = usuarios.find(u => u.email === email);
+
+        if(usuario && usuario.senha === senha) {
+            state.currentUser = { nome: usuario.nome, email: usuario.email, joinedAt: usuario.joinedAt };
+        } else if(!usuario) {
+            state.currentUser = { nome: email.split('@')[0], email, joinedAt: Date.now() };
+        } else {
+            showToast('Senha incorreta!', 'error');
+            return;
+        }
+
+        saveState();
+        closeAuthModal();
+        updateUserUI();
+        showToast(`Bem-vindo, ${state.currentUser.nome}!`, 'success');
+
+        if(state.authCallback) { state.authCallback(); state.authCallback = null; }
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const nome = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const senha = document.getElementById('regPassword').value;
+
+        const usuarios = JSON.parse(localStorage.getItem('eliteSTL_usuarios') || '[]');
+        if(usuarios.find(u => u.email === email)) {
+            showToast('Este e-mail já está cadastrado!', 'error');
+            return;
+        }
+
+        const novoUsuario = { nome, email, senha, joinedAt: Date.now() };
+        usuarios.push(novoUsuario);
+        localStorage.setItem('eliteSTL_usuarios', JSON.stringify(usuarios));
+        state.currentUser = { nome, email, joinedAt: novoUsuario.joinedAt };
+        saveState();
+        closeAuthModal();
+        updateUserUI();
+        showToast(`Conta criada com sucesso! Bem-vindo, ${nome}!`, 'success');
+
+        if(state.authCallback) { state.authCallback(); state.authCallback = null; }
+    }
+
+    function logout() {
+        state.currentUser = null;
+        saveState();
+        updateUserUI();
+        navigateTo('home');
+        showToast('Você saiu da sua conta', 'info');
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if(input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    function toggleUserMenu() {
+        const menu = document.getElementById('userMenu');
+        menu.classList.toggle('hidden');
+        renderUserMenu();
+    }
+
+    function renderUserMenu() {
+        const content = document.getElementById('userMenuContent');
+        if(state.currentUser) {
+            const u = state.currentUser;
+            content.innerHTML = `
+            <div class="p-4 border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-black font-bold">${u.nome.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <p class="font-semibold text-sm">${u.nome}</p>
+                        <p class="text-xs text-gray-500">${u.email}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="py-2">
+                <button onclick="navigateTo('profile'); toggleUserMenu()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/5 hover:text-gold-400 transition-colors">
+                    <i class="fas fa-user w-5 text-center"></i> Meu Perfil
+                </button>
+                <button onclick="navigateTo('favorites'); toggleUserMenu()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/5 hover:text-gold-400 transition-colors">
+                    <i class="fas fa-heart w-5 text-center"></i> Favoritos <span class="ml-auto text-xs text-gray-600">${state.favorites.length}</span>
+                </button>
+                <button onclick="toggleCart(); toggleUserMenu()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/5 hover:text-gold-400 transition-colors">
+                    <i class="fas fa-shopping-bag w-5 text-center"></i> Carrinho <span class="ml-auto text-xs text-gray-600">${state.cart.length}</span>
+                </button>
+            </div>
+            <div class="border-t border-white/5 py-2">
+                <button onclick="logout(); toggleUserMenu()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors">
+                    <i class="fas fa-sign-out-alt w-5 text-center"></i> Sair
+                </button>
+            </div>`;
+        } else {
+            content.innerHTML = `
+            <div class="p-4">
+                <p class="text-sm text-gray-400 mb-4">Faça login para acessar todos os recursos.</p>
+                <button onclick="openAuthModal('login'); toggleUserMenu()" class="btn-gold w-full py-3 rounded-xl text-black font-bold text-sm mb-2 flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                <button onclick="openAuthModal('register'); toggleUserMenu()" class="w-full py-3 rounded-xl border border-white/10 hover:border-gold-500/30 text-sm text-gray-300 hover:text-gold-400 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-user-plus"></i> Criar Conta
+                </button>
+            </div>`;
+        }
+    }
+
+    function updateUserUI() {
+        const avatar = document.getElementById('userAvatar');
+        const nameEl = document.getElementById('userName');
+        if(state.currentUser) {
+            avatar.innerHTML = `<span class="text-black font-bold text-sm bg-gradient-to-br from-gold-400 to-gold-600 w-full h-full flex items-center justify-center">${state.currentUser.nome.charAt(0).toUpperCase()}</span>`;
+            nameEl.textContent = state.currentUser.nome.split(' ')[0];
+        } else {
+            avatar.innerHTML = '<i class="fas fa-user text-gray-400"></i>';
+            nameEl.textContent = 'Entrar';
+        }
+    }
+
+    document.addEventListener('click', e => {
+        const menu = document.getElementById('userMenu');
+        const btn = document.getElementById('userBtn');
+        if(menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add('hidden');
+    });
+
+    // ============================================
+    // 🎬 ANIMAÇÕES DE SCROLL
+    // ============================================
+    function observeAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    const anim = entry.target.dataset.anim || 'fade-in-up';
+                    entry.target.classList.add(anim);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.anim-observe').forEach(el => observer.observe(el));
+    }
+
+    // ============================================
+    // 🛠️ UTILITÁRIOS
+    // ============================================
+    function renderStars(rating) {
+        let stars = '';
+        for(let i=1;i<=5;i++) {
+            if(i<=Math.floor(rating)) stars += '<i class="fas fa-star text-yellow-400 text-[10px]"></i>';
+            else if(i-0.5<=rating) stars += '<i class="fas fa-star-half-alt text-yellow-400 text-[10px]"></i>';
+            else stars += '<i class="far fa-star text-gray-600 text-[10px]"></i>';
+        }
+        return stars;
+    }
+
+    function formatNumber(n) {
+        if(n >= 1000000) return (n/1000000).toFixed(1)+'M';
+        if(n >= 1000) return (n/1000).toFixed(1)+'K';
+        return n.toString();
+    }
+
+    // ============================================
+    // 🚀 INICIALIZAÇÃO
+    // ============================================
+    function init() {
+        updateUserUI();
+        updateCartBadge();
+        updateFavBadge();
+        renderPage();
+    }
+
+    init();
     </script>
 </body>
 </html>
